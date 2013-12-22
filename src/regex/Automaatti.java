@@ -20,7 +20,7 @@ public class Automaatti {
         alkutila.muutaAktiiviseksi();
         tilat = new ArrayList<>();
         tilat.add(alkutila);
-        "jee".matches(null);
+        
     }
     
     /**
