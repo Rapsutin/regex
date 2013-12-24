@@ -12,6 +12,7 @@ import regex.Automaatti;
 import regex.Siirtofunktio;
 import regex.Tila;
 import static org.junit.Assert.*;
+import regex.AutomaatinRakentaja;
 
 /**
  *
@@ -79,6 +80,30 @@ public class regexTest {
         }
         assertTrue(alkutila.onAktiivinen());
         assertTrue(automaatti.getTilat().get(1).onAktiivinen());
+    }
+    
+    @Test
+    public void lisaako_merkitseLiitokset_liitosmerkin_kirjainten_valiin() {
+        AutomaatinRakentaja automaatinRakentaja = new AutomaatinRakentaja("abaa");
+        assertEquals("a¤b¤a¤a", automaatinRakentaja.merkitseLiitokset());
+        
+        automaatinRakentaja = new AutomaatinRakentaja("bb");
+        assertEquals("b¤b", automaatinRakentaja.merkitseLiitokset());
+    }
+    
+    @Test
+    public void lisaako_merkitseLiitokset_liitosmerkin_kirjaimen_ja_vasemman_sulun_valiin() {
+        AutomaatinRakentaja automaatinRakentaja = new AutomaatinRakentaja("a(baa)*");
+        assertEquals("a¤(b¤a¤a)*", automaatinRakentaja.merkitseLiitokset());
+    }
+    
+    @Test
+    public void lisaako_merkitseLiitokset_liitosmerkin_osan_paattavan_operaattorin_ja_kirjaimen_valiin() {
+        AutomaatinRakentaja automaatinRakentaja = new AutomaatinRakentaja("(ab)*aa");
+        assertEquals("(a¤b)*¤a¤a", automaatinRakentaja.merkitseLiitokset());
+        
+        automaatinRakentaja = new AutomaatinRakentaja("(a)?b");
+        assertEquals("(a)?¤b", automaatinRakentaja.merkitseLiitokset());
     }
     
 }
