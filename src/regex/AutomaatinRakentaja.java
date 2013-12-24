@@ -27,7 +27,7 @@ public class AutomaatinRakentaja {
         for (int i = 0; i < infix.length(); i++) {
             if(        onkoKaksiKirjaintaPerakkain(i) 
                     || onkoKirjainJaVasenSulkuPerakkain(i)
-                    || onkoOsanPäättäväOperaattoriJaKirjainPerakkain(i)) {
+                    || onkoOsanPaattavaOperaattoriJaKirjainPerakkain(i)) {
                 
                 infixLiitoksilla += "¤";
             }
@@ -55,7 +55,7 @@ public class AutomaatinRakentaja {
         return false;
     }
     
-    private boolean onkoOsanPäättäväOperaattoriJaKirjainPerakkain(int indeksi) {
+    private boolean onkoOsanPaattavaOperaattoriJaKirjainPerakkain(int indeksi) {
         
         if(indeksi >= 1) {
             if(infix.charAt(indeksi-1) == '*' || infix.charAt(indeksi-1) == '+'
