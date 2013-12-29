@@ -13,6 +13,7 @@ import regex.Siirtofunktio;
 import regex.Tila;
 import static org.junit.Assert.*;
 import regex.AutomaatinRakentaja;
+import regex.KaanteinenPuolalainenNotaatio;
 
 /**
  *
@@ -84,26 +85,53 @@ public class regexTest {
     
     @Test
     public void lisaako_merkitseLiitokset_liitosmerkin_kirjainten_valiin() {
-        AutomaatinRakentaja automaatinRakentaja = new AutomaatinRakentaja("abaa");
-        assertEquals("a¤b¤a¤a", automaatinRakentaja.merkitseLiitokset());
+        KaanteinenPuolalainenNotaatio kpr = new KaanteinenPuolalainenNotaatio("abaa");
+        assertEquals("a¤b¤a¤a", kpr.merkitseLiitokset());
         
-        automaatinRakentaja = new AutomaatinRakentaja("bb");
-        assertEquals("b¤b", automaatinRakentaja.merkitseLiitokset());
+        kpr = new KaanteinenPuolalainenNotaatio("bb");
+        assertEquals("b¤b", kpr.merkitseLiitokset());
     }
     
     @Test
     public void lisaako_merkitseLiitokset_liitosmerkin_kirjaimen_ja_vasemman_sulun_valiin() {
-        AutomaatinRakentaja automaatinRakentaja = new AutomaatinRakentaja("a(baa)*");
-        assertEquals("a¤(b¤a¤a)*", automaatinRakentaja.merkitseLiitokset());
+        KaanteinenPuolalainenNotaatio kpr = new KaanteinenPuolalainenNotaatio("a(baa)*");
+        assertEquals("a¤(b¤a¤a)*", kpr.merkitseLiitokset());
     }
     
     @Test
     public void lisaako_merkitseLiitokset_liitosmerkin_osan_paattavan_operaattorin_ja_kirjaimen_valiin() {
-        AutomaatinRakentaja automaatinRakentaja = new AutomaatinRakentaja("(ab)*aa");
-        assertEquals("(a¤b)*¤a¤a", automaatinRakentaja.merkitseLiitokset());
+        KaanteinenPuolalainenNotaatio kpr = new KaanteinenPuolalainenNotaatio("(ab)*aa");
+        assertEquals("(a¤b)*¤a¤a", kpr.merkitseLiitokset());
         
-        automaatinRakentaja = new AutomaatinRakentaja("(a)?b");
-        assertEquals("(a)?¤b", automaatinRakentaja.merkitseLiitokset());
+        kpr = new KaanteinenPuolalainenNotaatio("(a)?b");
+        assertEquals("(a)?¤b", kpr.merkitseLiitokset());
+    }
+    
+    @Test
+    public void lisaako_merkitseLiitokset_liitosmerkin_osan_paattavan_operaattorin_ja_vasemman_sulun_valiin() {
+        KaanteinenPuolalainenNotaatio kpr = new KaanteinenPuolalainenNotaatio("(ab)*(a)*");
+        assertEquals("(a¤b)*¤(a)*", kpr.merkitseLiitokset());
+        
+    }
+    
+    @Test
+    public void toimivatko_yksinkertaiset_muunnokset_kaanteiseksi_puolalaiseksi_notaatioksi() {
+        KaanteinenPuolalainenNotaatio kpr = new KaanteinenPuolalainenNotaatio("a|b");
+        assertEquals("ab|", kpr.muunnaKaanteiseksiPuolalaiseksiNotaatioksi());
+        kpr = new KaanteinenPuolalainenNotaatio("ba|ab");
+        assertEquals("ba¤ab¤|", kpr.muunnaKaanteiseksiPuolalaiseksiNotaatioksi());
+        kpr = new KaanteinenPuolalainenNotaatio("b|a|ab");
+        assertEquals("ba|ab¤|", kpr.muunnaKaanteiseksiPuolalaiseksiNotaatioksi());
+    }
+    
+    @Test
+    public void toimivatko_sululliset_muutokset() {
+        KaanteinenPuolalainenNotaatio kpr = new KaanteinenPuolalainenNotaatio("(ab)*");
+        assertEquals("ab¤*", kpr.muunnaKaanteiseksiPuolalaiseksiNotaatioksi());
+        kpr = new KaanteinenPuolalainenNotaatio("(a|b)*a");
+        assertEquals("ab|*a¤", kpr.muunnaKaanteiseksiPuolalaiseksiNotaatioksi());
+        kpr = new KaanteinenPuolalainenNotaatio("(a|(ab)*)*c");
+        assertEquals("aab¤*|*c¤", kpr.muunnaKaanteiseksiPuolalaiseksiNotaatioksi());
     }
     
 }
