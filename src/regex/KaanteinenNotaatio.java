@@ -7,12 +7,14 @@ package regex;
 import java.util.Stack;
 
 /**
- *
+ *Luokan avulla voidaan muuttaa tavallisessa muodossa olevia
+ * sännöllisiä lausekkeita käänteiseksi puolalaiseksi notaatioksi.
  * @author Juho
  */
 public class KaanteinenNotaatio {
-    
-    
+
+    private KaanteinenNotaatio() {}
+
     /**
      * Muuntaa annetun syötteen käänteiseksi puolalaiseksi
      * notaatioksi, jonka avulla voidaan rakentaa helposti
