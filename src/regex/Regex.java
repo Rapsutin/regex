@@ -14,6 +14,7 @@ public class Regex {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        
+        Automaatti automaatti = new Automaatti("abc");
+        System.out.println("ss");
     }
 }

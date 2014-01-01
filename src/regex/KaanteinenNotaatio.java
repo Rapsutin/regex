@@ -11,7 +11,7 @@ import java.util.Stack;
  * sännöllisiä lausekkeita käänteiseksi puolalaiseksi notaatioksi.
  * @author Juho
  */
-public class KaanteinenNotaatio {
+public final class KaanteinenNotaatio {
 
     private KaanteinenNotaatio() {}
 
@@ -42,14 +42,16 @@ public class KaanteinenNotaatio {
      * http://en.wikipedia.org/wiki/Shunting-yard_algorithm
      */
     private static void kasitteleMerkki(char kasiteltavaMerkki, StringBuilder output, Stack pino) {
-        if(Character.isLetter(kasiteltavaMerkki)) {
-            output.append(kasiteltavaMerkki);
-        } else if(Operaattori.valueOf(kasiteltavaMerkki) != null) {
+        
+            
+        if(Operaattori.valueOf(kasiteltavaMerkki) != null) {
             kasitteleOperaattori(kasiteltavaMerkki, pino, output);
         } else if(kasiteltavaMerkki == '(') {
             pino.push('(');
         } else if(kasiteltavaMerkki == ')') {
             kasitteleOikeaSulku(pino, output);
+        } else {
+            output.append(kasiteltavaMerkki);
         }
     }
     

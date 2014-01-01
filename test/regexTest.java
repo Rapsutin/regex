@@ -12,7 +12,6 @@ import regex.Automaatti;
 import regex.Siirtofunktio;
 import regex.Tila;
 import static org.junit.Assert.*;
-import regex.AutomaatinRakentaja;
 import regex.KaanteinenNotaatio;
 
 /**
@@ -21,11 +20,10 @@ import regex.KaanteinenNotaatio;
  */
 public class regexTest {
     
-    private Automaatti automaatti;
-    private Tila alkutila;
+   
+    
     public regexTest() {
-        alkutila = new Tila();
-        automaatti = new Automaatti(alkutila);
+        
     }
     
     @BeforeClass
@@ -44,44 +42,18 @@ public class regexTest {
     public void tearDown() {
     }
     
-    public void automaatti1() {
-        automaatti.lisaaTila(new Tila());
-        alkutila.lisaaSiirtofunktio(new Siirtofunktio(1, 'a', automaatti.getTilat()));
-        automaatti.annaSyote('a');
-    }
     
-    @Test
-    public void muuttaako_siirtofunktio_toisen_tilan_aktiiviseksi() {
-        automaatti1();
-        assertTrue(automaatti.getTilat().get(1).onAktiivinen());
-    }
     
-    @Test
-    public void onko_lahtofunktio_epaaktiivinen() {
-        automaatti1();
-        assertTrue(!automaatti.getTilat().get(0).onAktiivinen());
-    }
-    
-    @Test
-    public void kahden_syotteen_jalkeen_molemmat_epaaktiivisia() {
-        automaatti1();
-        automaatti.annaSyote('a');
-        assertTrue(!automaatti.getTilat().get(0).onAktiivinen());
-        assertTrue(!automaatti.getTilat().get(1).onAktiivinen());
-    }
-    
-    @Test
-    public void toimivatko_siirtofunktiot_jotka_eivat_tarvitse_syotetta() {
-        automaatti1();
-        alkutila.muutaAktiiviseksi();
-        alkutila.lisaaSiirtofunktio(new Siirtofunktio(alkutila, null));
-        
-        for (int i = 0; i < 10; i++) {
-            automaatti.annaSyote('a');
-        }
-        assertTrue(alkutila.onAktiivinen());
-        assertTrue(automaatti.getTilat().get(1).onAktiivinen());
-    }
+   @Test
+   public void toimiiko_automaatti1() {
+       Automaatti automaatti = new Automaatti('a');
+       automaatti.getAlkutila().muutaAktiiviseksi();
+       automaatti.annaSyote('a');
+       
+       assertTrue(!automaatti.getAlkutila().onAktiivinen());
+       assertTrue(automaatti.getLopputila().onAktiivinen());
+   }
+   
     
     @Test
     public void lisaako_merkitseLiitokset_liitosmerkin_kirjainten_valiin() {

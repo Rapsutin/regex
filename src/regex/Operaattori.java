@@ -43,6 +43,12 @@ public enum Operaattori {
         return laskujarjestys;
     }
     
+    public static boolean onkoOperaattori(char c) {
+        if(valueOf(c) == null) {
+            return false;
+        }
+        return true;
+    }
     
     @Override
     public String toString() {

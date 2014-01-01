@@ -12,16 +12,61 @@ import java.util.List;
  * @author Juho
  */
 public class Automaatti {
+    
     private List<Tila> tilat;
     private Tila alkutila;
+    private Tila lopputila;
     
-    public Automaatti(Tila alkutila) {
-        this.alkutila = alkutila;
-        alkutila.muutaAktiiviseksi();
+    
+    public Automaatti() {
         tilat = new ArrayList<>();
+        alkutila = new Tila();
+        lopputila = new Tila();
         tilat.add(alkutila);
-        
+        tilat.add(lopputila);
     }
+    
+    public Automaatti(Character hyvaksyttySyote) {
+        this();
+        alkutila.lisaaSiirtofunktio(new Siirtofunktio(lopputila, hyvaksyttySyote));
+    }
+    
+    public Automaatti (String infix) {
+        this(infix.charAt(0));
+        String postfix = KaanteinenNotaatio.muunnaKaanteiseksi(infix);
+        List<Automaatti> aliautomaatit = new ArrayList<>();
+        aliautomaatit.add(this);
+        for (int i = 1; i < postfix.length(); i++) {
+            char kasiteltava = postfix.charAt(i);
+            
+            if(Operaattori.onkoOperaattori(kasiteltava) || kasiteltava == ')' || kasiteltava == '(') {
+                kasitteleOperaattori(kasiteltava, aliautomaatit);
+            } else {
+                aliautomaatit.add(new Automaatti(kasiteltava));
+            }
+        }
+               
+    }
+    
+    private void kasitteleOperaattori(char operaattori, List<Automaatti> aliAutomaatit) {
+        Automaatti vasen = aliAutomaatit.get(aliAutomaatit.size() - 2);
+        Automaatti oikea = aliAutomaatit.get(aliAutomaatit.size() - 1);
+        switch(operaattori) {
+            case '|':
+                vasen.alkutila.lisaaSiirtofunktio(new Siirtofunktio(oikea.getAlkutila(), null));
+                vasen.getTilat().addAll(oikea.getTilat());
+                aliAutomaatit.remove(oikea);
+            case '¤':
+                vasen.lopputila.lisaaSiirtofunktio(new Siirtofunktio(oikea.getAlkutila(), null));
+                vasen.setLopputila(oikea.lopputila);
+                vasen.getTilat().addAll(oikea.getTilat());
+                aliAutomaatit.remove(oikea);
+        }
+    }
+
+   
+    
+    
     
     /**
      * Antaa automaatille syötteen
@@ -30,7 +75,7 @@ public class Automaatti {
      * @param syote Annettava syöte.
      */
     public void annaSyote(Character syote) {
-        ArrayList<Tila> aktiivisetTilat = new ArrayList<>();
+        List<Tila> aktiivisetTilat = new ArrayList<>();
         
         for(Tila t : tilat) {
             if(t.onAktiivinen()) {
@@ -66,6 +111,21 @@ public class Automaatti {
     public Tila getAlkutila() {
         return alkutila;
     }
+
+    public Tila getLopputila() {
+        return lopputila;
+    }
+    
+     public void setAlkutila(Tila alkutila) {
+        this.alkutila = alkutila;
+    }
+
+    public void setLopputila(Tila lopputila) {
+        this.lopputila = lopputila;
+    }
+    
+    
+    
     
     
     
