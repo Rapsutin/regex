@@ -25,6 +25,15 @@ public class Tila {
      * eivät tarvitse syötettä.
      * @param syote Funktioille annettava syöte.
      */
+    public void kutsuMerkittomiaSiirtofunktioita() {
+        if(!aktiivinen) {
+            return;
+        }
+        for(Siirtofunktio s : siirtofunktiot) {
+            s.siirra(null);
+        }
+    }
+    
     public void kutsuSiirtofunktioita(Character syote) {
         
         if(!aktiivinen) {
@@ -32,9 +41,6 @@ public class Tila {
         }
         aktiivinen = false;
         
-        for(Siirtofunktio s : siirtofunktiot) {
-            s.siirra(null); //Tässä käsitellään ensiksi funktiot, jotka hyväksyvät tyhjän syötteen.
-        }
         for(Siirtofunktio s : siirtofunktiot) {
             s.siirra(syote);
         }
@@ -69,5 +75,11 @@ public class Tila {
     public void muutaEpaaktiiviseksi() {
         aktiivinen = false;
     }
+
+    @Override
+    public String toString() {
+        return super.toString()+" Aktiivisuus:"+onAktiivinen();
+    }
+    
     
 }

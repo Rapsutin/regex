@@ -46,7 +46,7 @@ public class regexTest {
     
    @Test
    public void toimiiko_automaatti1() {
-       Automaatti automaatti = new Automaatti('a');
+       Automaatti automaatti = Automaatti.luoKirjainautomaatti('a');
        automaatti.getAlkutila().muutaAktiiviseksi();
        automaatti.annaSyote('a');
        
@@ -91,5 +91,6 @@ public class regexTest {
         assertEquals("ab|*a¤", KaanteinenNotaatio.muunnaKaanteiseksi("(a|b)*a"));
         assertEquals("aab¤*|*c¤", KaanteinenNotaatio.muunnaKaanteiseksi("(a|(ab)*)*c"));
     }
+    
     
 }

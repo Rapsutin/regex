@@ -18,55 +18,72 @@ public class Automaatti {
     private Tila lopputila;
     
     
-    public Automaatti() {
-        tilat = new ArrayList<>();
-        alkutila = new Tila();
-        lopputila = new Tila();
-        tilat.add(alkutila);
-        tilat.add(lopputila);
+    public Automaatti(List<Tila> tilat, Tila alkutila, Tila lopputila) {
+        this.tilat = tilat;
+        this.alkutila = alkutila;
+        this.lopputila = lopputila;
     }
     
-    public Automaatti(Character hyvaksyttySyote) {
-        this();
-        alkutila.lisaaSiirtofunktio(new Siirtofunktio(lopputila, hyvaksyttySyote));
+    /**
+     * Luo kaksitilaisen automaatin, joka hyväksyy ainoastaan yhden
+     * syötteen.
+     * @param hyvaksyttySyote Syöte, jonka automaatti hyväksyy.
+     * @return Automaatti-olio.
+     */
+    public static Automaatti luoKirjainautomaatti (Character hyvaksyttySyote) {
+        List<Tila> automaatinTilat = new ArrayList<>();
+        Tila automaatinAlkutila = new Tila();
+        Tila automaatinLopputila = new Tila();
+        automaatinTilat.add(automaatinAlkutila);
+        automaatinTilat.add(automaatinLopputila);
+        automaatinAlkutila.lisaaSiirtofunktio(new Siirtofunktio(automaatinLopputila, hyvaksyttySyote));
+        return new Automaatti(automaatinTilat, automaatinAlkutila, automaatinLopputila);
     }
     
-    public Automaatti (String infix) {
-        this(infix.charAt(0));
-        String postfix = KaanteinenNotaatio.muunnaKaanteiseksi(infix);
-        List<Automaatti> aliautomaatit = new ArrayList<>();
-        aliautomaatit.add(this);
-        for (int i = 1; i < postfix.length(); i++) {
-            char kasiteltava = postfix.charAt(i);
-            
-            if(Operaattori.onkoOperaattori(kasiteltava) || kasiteltava == ')' || kasiteltava == '(') {
-                kasitteleOperaattori(kasiteltava, aliautomaatit);
-            } else {
-                aliautomaatit.add(new Automaatti(kasiteltava));
-            }
-        }
-               
+    /**
+     * Luo automaatin, jossa on
+     * kaksi automaattia "sarjassa."
+     * @param edeltava Automaatin ensimmäinen osa.
+     * @param jalkimmainen Automaatin jälkimmäinen osa.
+     * @return Automaatti-olio.
+     */
+    public static Automaatti luoLiitosautomaatti(Automaatti edeltava, Automaatti jalkimmainen) {
+        List <Tila> automaatinTilat = new ArrayList<>();
+        Tila automaatinAlkutila = edeltava.getAlkutila();
+        Tila automaatinLopputila = jalkimmainen.getLopputila();
+        automaatinTilat.addAll(edeltava.getTilat());
+        automaatinTilat.addAll(jalkimmainen.getTilat());
+        edeltava.getLopputila().lisaaSiirtofunktio(new Siirtofunktio(jalkimmainen.getAlkutila(), null));
+        
+        return new Automaatti(automaatinTilat, automaatinAlkutila, automaatinLopputila);
     }
     
-    private void kasitteleOperaattori(char operaattori, List<Automaatti> aliAutomaatit) {
-        Automaatti vasen = aliAutomaatit.get(aliAutomaatit.size() - 2);
-        Automaatti oikea = aliAutomaatit.get(aliAutomaatit.size() - 1);
-        switch(operaattori) {
-            case '|':
-                vasen.alkutila.lisaaSiirtofunktio(new Siirtofunktio(oikea.getAlkutila(), null));
-                vasen.getTilat().addAll(oikea.getTilat());
-                aliAutomaatit.remove(oikea);
-            case '¤':
-                vasen.lopputila.lisaaSiirtofunktio(new Siirtofunktio(oikea.getAlkutila(), null));
-                vasen.setLopputila(oikea.lopputila);
-                vasen.getTilat().addAll(oikea.getTilat());
-                aliAutomaatit.remove(oikea);
-        }
-    }
-
-   
-    
-    
+    /**
+     * Luo automaatin, jossa on
+     * kaksi automaattia "rinnan."
+     * Automaatti hyväksyy syötteen, jonka
+     * jompi kumpi automaateista hyväksyy.
+     * @param joko Ensimmainen vaihtoehto
+     * @param tai Toinen vaihtoehto
+     * @return Automaatti-olio.
+     */
+    public static Automaatti luoTaiautomaatti(Automaatti joko, Automaatti tai) {
+        List<Tila> automaatinTilat = new ArrayList<>();
+        Tila automaatinAlkutila = new Tila();
+        Tila automaatinLopputila = new Tila();
+        
+        automaatinTilat.add(automaatinAlkutila);
+        automaatinTilat.add(automaatinLopputila);
+        automaatinTilat.addAll(joko.getTilat());
+        automaatinTilat.addAll(tai.getTilat());
+        
+        automaatinAlkutila.lisaaSiirtofunktio(new Siirtofunktio(joko.getAlkutila(), null));
+        automaatinAlkutila.lisaaSiirtofunktio(new Siirtofunktio(tai.getAlkutila(), null));
+        joko.getLopputila().lisaaSiirtofunktio(new Siirtofunktio(automaatinLopputila, null));
+        tai.getLopputila().lisaaSiirtofunktio(new Siirtofunktio(automaatinLopputila, null));
+        
+        return new Automaatti(automaatinTilat, automaatinAlkutila, automaatinLopputila);
+   }
     
     /**
      * Antaa automaatille syötteen
@@ -76,17 +93,53 @@ public class Automaatti {
      */
     public void annaSyote(Character syote) {
         List<Tila> aktiivisetTilat = new ArrayList<>();
-        
+        lisaaAktiiviset(aktiivisetTilat);
+        kutsuMerkittomiaFunktioita(aktiivisetTilat, syote);
+        kutsuFunktioita(aktiivisetTilat, syote);
+        kutsuMerkittomiaFunktioita(aktiivisetTilat, syote);
+    }
+    
+    
+    public void annaSyote(String syote) {
+        for (int i = 0; i < syote.length(); i++) {
+            annaSyote(syote.charAt(i));
+        }
+    }
+    
+     private void lisaaAktiiviset(List<Tila> aktiivisetTilat) {
         for(Tila t : tilat) {
-            if(t.onAktiivinen()) {
+            if(t.onAktiivinen() && !aktiivisetTilat.contains(t)) {
                 aktiivisetTilat.add(t);
             }
         }
-        
+    }
+     
+      private void kutsuMerkittomiaFunktioita(List<Tila> aktiivisetTilat, Character syote) {
+          int aktiivisiaTiloja = 0;
+          while(aktiivisetTilat.size() != aktiivisiaTiloja) {
+              aktiivisiaTiloja = aktiivisetTilat.size();
+              for(Tila t : aktiivisetTilat) {
+                t.kutsuMerkittomiaSiirtofunktioita();
+              }
+              lisaaAktiiviset(aktiivisetTilat);
+          }
+    }
+
+    private void kutsuFunktioita(List<Tila> aktiivisetTilat, Character syote) {
         for(Tila t : aktiivisetTilat) {
             t.kutsuSiirtofunktioita(syote);
         }
     }
+
+  
+    
+    public void muutaKaikkiTilatEpaaktiivisiksi() {
+        for(Tila t : tilat) {
+            t.muutaEpaaktiiviseksi();
+        }
+    }
+    
+    
     
     /**
      * Lisää automaattiin tilan.
@@ -123,6 +176,8 @@ public class Automaatti {
     public void setLopputila(Tila lopputila) {
         this.lopputila = lopputila;
     }
+
+   
     
     
     

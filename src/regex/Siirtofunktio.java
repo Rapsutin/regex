@@ -40,4 +40,10 @@ public class Siirtofunktio {
         
 
     }
+
+    public Tila getLopputila() {
+        return lopputila;
+    }
+    
+    
 }
