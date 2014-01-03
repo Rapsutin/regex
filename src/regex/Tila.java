@@ -13,10 +13,12 @@ import java.util.List;
  */
 public class Tila {
     private boolean aktiivinen;
+    private boolean aktivoituViimeksi;
     private List<Siirtofunktio> siirtofunktiot;
     
     public Tila() {
         aktiivinen = false;
+        aktivoituViimeksi = false;
         siirtofunktiot = new ArrayList<>();
     }
     /**
@@ -39,7 +41,7 @@ public class Tila {
         if(!aktiivinen) {
             return;
         }
-        aktiivinen = false;
+        muutaEpaaktiiviseksi();
         
         for(Siirtofunktio s : siirtofunktiot) {
             s.siirra(syote);
@@ -67,18 +69,34 @@ public class Tila {
      */
     public void muutaAktiiviseksi() {
         aktiivinen = true;
+        kutsuMerkittomiaSiirtofunktioita();
     }
     
     /**
      * Muuttaa tilan epäaktiiviseksi.
      */
     public void muutaEpaaktiiviseksi() {
-        aktiivinen = false;
+        if(!aktivoituViimeksi) {
+            aktiivinen = false;
+        }
+        
     }
 
     @Override
     public String toString() {
         return super.toString()+" Aktiivisuus:"+onAktiivinen();
+    }
+
+    public List<Siirtofunktio> getSiirtofunktiot() {
+        return siirtofunktiot;
+    }
+
+    public void setAktivoituViimeksi(boolean aktivoituViimeksi) {
+        this.aktivoituViimeksi = aktivoituViimeksi;
+    }
+
+    public boolean isAktivoituViimeksi() {
+        return aktivoituViimeksi;
     }
     
     

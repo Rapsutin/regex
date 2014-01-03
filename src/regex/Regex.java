@@ -27,15 +27,22 @@ public class Regex {
         return false;
     }
     
+    public static boolean vastaakoSyote(String syote, String regex) {
+        return vastaakoSyote(syote, Automaatti.luoAutomaattiRegexista(regex));
+    }
+    
     
     public static void main(String[] args) {
         Automaatti a = Automaatti.luoKirjainautomaatti('a');
         Automaatti b = Automaatti.luoKirjainautomaatti('b');
         Automaatti ab = Automaatti.luoLiitosautomaatti(a, b);
         Automaatti c = Automaatti.luoKirjainautomaatti('c');
-        Automaatti abtaic = Automaatti.luoTaiautomaatti(ab, c);
-        abtaic.getAlkutila().muutaAktiiviseksi();
-        abtaic.annaSyote("ab");
-        System.out.println("jee");
+        Automaatti abtahti = Automaatti.luoTahtiautomaatti(ab);
+        Automaatti supertesti = Automaatti.luoTaiautomaatti(abtahti, c);
+        
+        
+        System.out.println(vastaakoSyote("ababbc", "(bc|ab)*"));
+        
+        
     }
 }

@@ -24,6 +24,10 @@ public class Siirtofunktio {
         this.lopputila = lopputila;
         this.hyvaksyttySyote = hyvaksyttySyote;
     }
+
+    public Character getHyvaksyttySyote() {
+        return hyvaksyttySyote;
+    }
     
     
     
@@ -33,9 +37,10 @@ public class Siirtofunktio {
      * @param annettuSyote Annettu syöte.
      */
     public void siirra(Character annettuSyote) {
-        if (annettuSyote != hyvaksyttySyote && hyvaksyttySyote != null) {
+        if (annettuSyote != hyvaksyttySyote) {
         } else {
             lopputila.muutaAktiiviseksi();
+            lopputila.setAktivoituViimeksi(true);
         }
         
 
