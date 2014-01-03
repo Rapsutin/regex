@@ -4,6 +4,9 @@
  */
 package regex;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author Juho
@@ -17,14 +20,7 @@ public class Regex {
     
     
     public static boolean vastaakoSyote(String syote, Automaatti automaatti) {
-        automaatti.getAlkutila().muutaAktiiviseksi();
-        automaatti.annaSyote(syote);
-        if(automaatti.getLopputila().onAktiivinen()) {
-            automaatti.muutaKaikkiTilatEpaaktiivisiksi();
-            return true;
-        }
-        automaatti.muutaKaikkiTilatEpaaktiivisiksi();
-        return false;
+        return automaatti.annaSyote(syote);
     }
     
     public static boolean vastaakoSyote(String syote, String regex) {
@@ -33,16 +29,11 @@ public class Regex {
     
     
     public static void main(String[] args) {
-        Automaatti a = Automaatti.luoKirjainautomaatti('a');
-        Automaatti b = Automaatti.luoKirjainautomaatti('b');
-        Automaatti ab = Automaatti.luoLiitosautomaatti(a, b);
-        Automaatti c = Automaatti.luoKirjainautomaatti('c');
-        Automaatti abtahti = Automaatti.luoTahtiautomaatti(ab);
-        Automaatti supertesti = Automaatti.luoTaiautomaatti(abtahti, c);
+        
+        List<Tila> tilat = new ArrayList<>();
+        Automaatti testi = Automaatti.luoAutomaattiRegexista("(a|(a)*b)*");
         
         
-        System.out.println(vastaakoSyote("ababbc", "(bc|ab)*"));
-        
-        
+        System.out.println(vastaakoSyote("abbbbbbbbb", "(a|(a)*b)*"));
     }
 }

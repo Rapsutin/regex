@@ -158,64 +158,55 @@ public class Automaatti {
         return new Automaatti(automaatinTilat, automaatinAlkutila, automaatinLopputila);
     }
     
-    /**
-     * Antaa automaatille syötteen
-     * ja käsittelee aktiivisten tilojen
-     * siirtofunktiot.
-     * @param syote Annettava syöte.
-     */
-    public void annaSyote(Character syote) {
-        List<Tila> aktiivisetTilat = new ArrayList<>();
-        lisaaAktiiviset(aktiivisetTilat);
-        kutsuFunktioita(aktiivisetTilat, syote);
-        
-        for(Tila t : tilat) {
-            t.setAktivoituViimeksi(false);
-        }
-    }
+   
     
     /**
      * Antaa automaatille syötejonon.
-     * @param syotteet Syötejono.
+     * @param  Syötejono.
      */
-    public void annaSyote(String syotteet) {
-        for (int i = 0; i < syotteet.length(); i++) {
-            annaSyote(syotteet.charAt(i));
+    public boolean annaSyote(String syote) {
+        List<Tila> nykyiset = new ArrayList<>();
+        List<Tila> seuraavat = new ArrayList<>();
+        lisaaSeuraaviin(alkutila, seuraavat);
+        nykyiset = seuraavat;
+        seuraavat = new ArrayList<>();
+        
+        for (int i = 0; i < syote.length(); i++) {
+            char kirjain = syote.charAt(i);
+            kayLapiSiirtofunktiot(nykyiset, seuraavat, kirjain);
+            nykyiset = seuraavat;
+            seuraavat = new ArrayList<>();
         }
+        return nykyiset.contains(lopputila);
     }
     
-     private void lisaaAktiiviset(List<Tila> aktiivisetTilat) {
-        for(Tila t : tilat) {
-            if(t.onAktiivinen() && !aktiivisetTilat.contains(t)) {
-                aktiivisetTilat.add(t);
+    public void kayLapiSiirtofunktiot(List<Tila> nykyiset, List<Tila> seuraavat, char kirjain) {
+        for(Tila t : nykyiset) {
+            for(Siirtofunktio s : t.getSiirtofunktiot()) {
+                if(s.getHyvaksyttySyote() == null) {
+                    continue;
+                }
+                if(s.getHyvaksyttySyote() == kirjain) {
+                    lisaaSeuraaviin(s.getLopputila(), seuraavat);
+                }
             }
         }
     }
     
-    private void kutsuMerkittomiaFunktioita(List<Tila> aktiivisetTilat, Character syote) {
-        int aktiivisiaTiloja = 0;
-        while (aktiivisetTilat.size() != aktiivisiaTiloja) {
-            aktiivisiaTiloja = aktiivisetTilat.size();
-            for (Tila t : aktiivisetTilat) {
-                t.kutsuMerkittomiaSiirtofunktioita();
+    public void lisaaSeuraaviin(Tila lisattava, List<Tila> seuraavat) {
+        if(seuraavat.contains(lisattava)) {
+            return;
+        }
+        seuraavat.add(lisattava);
+        for(Siirtofunktio s : lisattava.getSiirtofunktiot()) {
+            if(s.getHyvaksyttySyote() == null) {
+                lisaaSeuraaviin(s.getLopputila(), seuraavat);
             }
-            lisaaAktiiviset(aktiivisetTilat);
         }
+        
     }
-
-    private void kutsuFunktioita(List<Tila> aktiivisetTilat, Character syote) {
-        for(Tila t : aktiivisetTilat) {
-            t.kutsuSiirtofunktioita(syote);
-        }
-    }
-
-  
     
-    public void muutaKaikkiTilatEpaaktiivisiksi() {
-        for(Tila t : tilat) {
-            t.muutaEpaaktiiviseksi();
-        }
-    }
+    
     
     
     
@@ -261,7 +252,8 @@ public class Automaatti {
     * kannalta. Siirtofunktiot muotoa (syöte)->lopputila.
     * @param automaatti Tulostettava automaatti.
     */
-    public static void tulostaAutomaatti(Automaatti automaatti) {
+    public void tulostaAutomaatti() {
+        Automaatti automaatti = this;
         for (int i = 0; i < automaatti.getTilat().size(); i++) {
             Tila tulostettava = automaatti.getTilat().get(i);
 
@@ -270,7 +262,7 @@ public class Automaatti {
                 Siirtofunktio kasiteltava = tulostettava.getSiirtofunktiot().get(j);
                 System.out.print(" (" + kasiteltava.getHyvaksyttySyote() + ")->" + automaatti.getTilat().indexOf(kasiteltava.getLopputila()));
             }
-            System.out.println(" Akt: " + tulostettava.onAktiivinen());
+            
             if (tulostettava.equals(automaatti.lopputila)) {
                 System.out.print(" LOPPU");
             }

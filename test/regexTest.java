@@ -9,8 +9,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import regex.Automaatti;
-import regex.Siirtofunktio;
-import regex.Tila;
+import regex.Regex;
 import static org.junit.Assert.*;
 import regex.KaanteinenNotaatio;
 
@@ -44,15 +43,7 @@ public class regexTest {
     
     
     
-   @Test
-   public void toimiiko_automaatti1() {
-       Automaatti automaatti = Automaatti.luoKirjainautomaatti('a');
-       automaatti.getAlkutila().muutaAktiiviseksi();
-       automaatti.annaSyote('a');
-       
-       assertTrue(!automaatti.getAlkutila().onAktiivinen());
-       assertTrue(automaatti.getLopputila().onAktiivinen());
-   }
+   
    
     
     @Test
@@ -90,6 +81,32 @@ public class regexTest {
         assertEquals("ab¤*", KaanteinenNotaatio.muunnaKaanteiseksi("(ab)*"));
         assertEquals("ab|*a¤", KaanteinenNotaatio.muunnaKaanteiseksi("(a|b)*a"));
         assertEquals("aab¤*|*c¤", KaanteinenNotaatio.muunnaKaanteiseksi("(a|(ab)*)*c"));
+    }
+    
+    
+    public void testaaja(String regex, String syote) {
+        assertEquals(syote.matches(regex), Regex.vastaakoSyote(syote, regex));
+    }
+    
+    @Test
+    public void testaa_yksinkertaisia_saannollisia_lausekkeita() {
+        testaaja("a|b", "a");
+        testaaja("ab|b", "ab");
+        testaaja("ab|b", "c");
+        testaaja("(ab)*", "ababab");
+        testaaja("(ab)*", "");
+        testaaja("(ab)*", "c");
+    }
+    
+    @Test
+    public void testaa_monimutkaisia_saannollisia_lausekkeita() {
+        testaaja("(a|(ba)*)*", "aababa");
+        testaaja("(a|(ba)*)*", "aabba");
+        testaaja("a|b|(ab)*b", "ababb");
+        testaaja("a|b|(ab)*b", "abab");
+        testaaja("a|ab|(ab)*b", "ab");
+        testaaja("(a|(a)*b)*", "abbbbbbbbbbbbbbbbbbbbbb");
+        testaaja("(a|(a)*b)*", "bbbbbbbbbbbbbb");
     }
     
     

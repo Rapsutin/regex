@@ -29,23 +29,6 @@ public class Siirtofunktio {
         return hyvaksyttySyote;
     }
     
-    
-    
-    /**
-     * Metodi muuttaa lopputilan aktiiviseksi, jos
-     * annettu syöte on oikea.
-     * @param annettuSyote Annettu syöte.
-     */
-    public void siirra(Character annettuSyote) {
-        if (annettuSyote != hyvaksyttySyote) {
-        } else {
-            lopputila.muutaAktiiviseksi();
-            lopputila.setAktivoituViimeksi(true);
-        }
-        
-
-    }
-
     public Tila getLopputila() {
         return lopputila;
     }
