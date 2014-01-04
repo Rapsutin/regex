@@ -31,7 +31,6 @@ public class Regex {
     public static void main(String[] args) {
         
         List<Tila> tilat = new ArrayList<>();
-        Automaatti testi = Automaatti.luoAutomaattiRegexista("(a|(a)*b)*");
         
         
         System.out.println(vastaakoSyote("abbbbbbbbb", "(a|(a)*b)*"));

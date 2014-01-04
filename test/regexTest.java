@@ -107,6 +107,11 @@ public class regexTest {
         testaaja("a|ab|(ab)*b", "ab");
         testaaja("(a|(a)*b)*", "abbbbbbbbbbbbbbbbbbbbbb");
         testaaja("(a|(a)*b)*", "bbbbbbbbbbbbbb");
+        testaaja("(c(ab)*c)*", "cc");
+        testaaja("(c(ab)*c)*", "cabc");
+        testaaja("(c(ab)*c)*", "cabccabc");
+        testaaja("(c(ab)*c)*", "cabccccabc");
+        testaaja("(c(ab)*c)*", "cabcccacabc");
     }
     
     

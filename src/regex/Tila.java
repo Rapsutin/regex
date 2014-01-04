@@ -12,11 +12,10 @@ import java.util.List;
  * @author Juho
  */
 public class Tila {
-    private boolean aktiivinen;
+    
     private List<Siirtofunktio> siirtofunktiot;
     
     public Tila() {
-        aktiivinen = false;
         siirtofunktiot = new ArrayList<>();
     }
     

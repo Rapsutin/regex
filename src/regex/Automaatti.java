@@ -15,13 +15,12 @@ import java.util.Stack;
 public class Automaatti {
 
     
-    private List<Tila> tilat;
+    
     private Tila alkutila;
     private Tila lopputila;
     
     
-    private Automaatti(List<Tila> tilat, Tila alkutila, Tila lopputila) {
-        this.tilat = tilat;
+    private Automaatti(Tila alkutila, Tila lopputila) {
         this.alkutila = alkutila;
         this.lopputila = lopputila;
     }
@@ -79,13 +78,12 @@ public class Automaatti {
      * @return Automaatti-olio.
      */
     public static Automaatti luoKirjainautomaatti (Character hyvaksyttySyote) {
-        List<Tila> automaatinTilat = new ArrayList<>();
+       
         Tila automaatinAlkutila = new Tila();
         Tila automaatinLopputila = new Tila();
-        automaatinTilat.add(automaatinAlkutila);
-        automaatinTilat.add(automaatinLopputila);
+        
         automaatinAlkutila.lisaaSiirtofunktio(new Siirtofunktio(automaatinLopputila, hyvaksyttySyote));
-        return new Automaatti(automaatinTilat, automaatinAlkutila, automaatinLopputila);
+        return new Automaatti(automaatinAlkutila, automaatinLopputila);
     }
     
     /**
@@ -96,14 +94,11 @@ public class Automaatti {
      * @return Automaatti-olio.
      */
     public static Automaatti luoLiitosautomaatti(Automaatti edeltava, Automaatti jalkimmainen) {
-        List <Tila> automaatinTilat = new ArrayList<>();
         Tila automaatinAlkutila = edeltava.getAlkutila();
         Tila automaatinLopputila = jalkimmainen.getLopputila();
-        automaatinTilat.addAll(edeltava.getTilat());
-        automaatinTilat.addAll(jalkimmainen.getTilat());
         edeltava.getLopputila().lisaaSiirtofunktio(new Siirtofunktio(jalkimmainen.getAlkutila(), null));
         
-        return new Automaatti(automaatinTilat, automaatinAlkutila, automaatinLopputila);
+        return new Automaatti(automaatinAlkutila, automaatinLopputila);
     }
     
     /**
@@ -116,21 +111,16 @@ public class Automaatti {
      * @return Automaatti-olio.
      */
     public static Automaatti luoTaiautomaatti(Automaatti joko, Automaatti tai) {
-        List<Tila> automaatinTilat = new ArrayList<>();
+        
         Tila automaatinAlkutila = new Tila();
         Tila automaatinLopputila = new Tila();
-
-        automaatinTilat.add(automaatinAlkutila);
-        automaatinTilat.add(automaatinLopputila);
-        automaatinTilat.addAll(joko.getTilat());
-        automaatinTilat.addAll(tai.getTilat());
 
         automaatinAlkutila.lisaaSiirtofunktio(new Siirtofunktio(joko.getAlkutila(), null));
         automaatinAlkutila.lisaaSiirtofunktio(new Siirtofunktio(tai.getAlkutila(), null));
         joko.getLopputila().lisaaSiirtofunktio(new Siirtofunktio(automaatinLopputila, null));
         tai.getLopputila().lisaaSiirtofunktio(new Siirtofunktio(automaatinLopputila, null));
 
-        return new Automaatti(automaatinTilat, automaatinAlkutila, automaatinLopputila);
+        return new Automaatti(automaatinAlkutila, automaatinLopputila);
     }
     
     /**
@@ -141,13 +131,8 @@ public class Automaatti {
      * @return Automaatti-olio.
      */
     public static Automaatti luoTahtiautomaatti(Automaatti toistuva) {
-        List<Tila> automaatinTilat = new ArrayList<>();
         Tila automaatinAlkutila = new Tila();
         Tila automaatinLopputila = new Tila();
-        
-        automaatinTilat.add(automaatinAlkutila);
-        automaatinTilat.add(automaatinLopputila);
-        automaatinTilat.addAll(toistuva.getTilat());
         
         automaatinAlkutila.lisaaSiirtofunktio(new Siirtofunktio(toistuva.alkutila, null));
         automaatinAlkutila.lisaaSiirtofunktio(new Siirtofunktio(automaatinLopputila, null));
@@ -155,14 +140,12 @@ public class Automaatti {
         toistuva.getLopputila().lisaaSiirtofunktio(new Siirtofunktio(automaatinLopputila, null));
         
         
-        return new Automaatti(automaatinTilat, automaatinAlkutila, automaatinLopputila);
+        return new Automaatti(automaatinAlkutila, automaatinLopputila);
     }
-    
-   
     
     /**
      * Antaa automaatille syötejonon.
-     * @param  Syötejono.
+     * @param syote Syötejono.
      */
     public boolean annaSyote(String syote) {
         List<Tila> nykyiset = new ArrayList<>();
@@ -207,29 +190,6 @@ public class Automaatti {
     }
     
     
-    
-    
-    
-    /**
-     * Lisää automaattiin tilan.
-     * @param lisattava Lisättävä tila.
-     */
-    public void lisaaTila(Tila lisattava) {
-        tilat.add(lisattava);
-    }
-    
-    /**
-     * 
-     * @return Kaikki automaatin tilat.
-     */
-    public List<Tila> getTilat() {
-        return tilat;
-    }
-    
-    /**
-     * 
-     * @return Alkutila.
-     */
     public Tila getAlkutila() {
         return alkutila;
     }
@@ -246,32 +206,7 @@ public class Automaatti {
         this.lopputila = lopputila;
     }
     
-   /**
-    * Testausmielessä luotu metodi.
-    * Ei mitään merkitystä ohjelman toiminnan
-    * kannalta. Siirtofunktiot muotoa (syöte)->lopputila.
-    * @param automaatti Tulostettava automaatti.
-    */
-    public void tulostaAutomaatti() {
-        Automaatti automaatti = this;
-        for (int i = 0; i < automaatti.getTilat().size(); i++) {
-            Tila tulostettava = automaatti.getTilat().get(i);
-
-            System.out.print(i + ".");
-            for (int j = 0; j < tulostettava.getSiirtofunktiot().size(); j++) {
-                Siirtofunktio kasiteltava = tulostettava.getSiirtofunktiot().get(j);
-                System.out.print(" (" + kasiteltava.getHyvaksyttySyote() + ")->" + automaatti.getTilat().indexOf(kasiteltava.getLopputila()));
-            }
-            
-            if (tulostettava.equals(automaatti.lopputila)) {
-                System.out.print(" LOPPU");
-            }
-            if (tulostettava.equals(automaatti.alkutila)) {
-                System.out.print(" ALKU");
-            }
-            System.out.println("");
-        }
-    }
+   
     
     
     
