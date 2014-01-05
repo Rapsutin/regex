@@ -20,12 +20,23 @@ public class OmaArrayList <E>{
         taulukko = new Object[10];
     }
     
+    /**
+     * Lisää taulukon loppuun annetun
+     * alkion.
+     * @param lisattava Lisättava alkio.
+     */
     public void add(E lisattava) {
         muutaTaulukonKokoaTarvittaessa();
         taulukko[seuraavaIndeksi] = lisattava;
         seuraavaIndeksi++;
     }
     
+    /**
+     * Palauttaa listan alkion,
+     * joka on annetussa indeksissä.
+     * @param indeksi Listan indeksi.
+     * @return Listan alkio.
+     */
     public E get(int indeksi) {
         if(indeksi >= seuraavaIndeksi || indeksi < 0) {
             throw new IndexOutOfBoundsException();
@@ -33,6 +44,10 @@ public class OmaArrayList <E>{
         return (E) taulukko[indeksi];
     }
     
+    /**
+     * Kaksinkertaistaa taulukon koon, kun
+     * se tulee täyteen.
+     */
     private void muutaTaulukonKokoaTarvittaessa() {
         if(getAlkioidenMaara() == taulukko.length) {
             Object[] uusiTaulukko = new Object[taulukko.length * 2];
