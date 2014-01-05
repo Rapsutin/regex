@@ -28,6 +28,13 @@ public enum Operaattori {
         this.merkki = merkki;
     }
     
+    /**
+     * Palauttaa merkkiä vastaavan operaattorin.
+     * @param c Merkki.
+     * @return Merkkiä vastaava operaattori. 
+     * Null, jos annetulle merkille ei löydy
+     * sopivaa operaattoria.
+     */
     public static Operaattori valueOf(char c) {
         switch (c) {
             case '*': return TAHTI;

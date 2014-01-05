@@ -4,8 +4,6 @@
  */
 package regex;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -17,22 +15,30 @@ public class Regex {
      * @param args the command line arguments
      */
     
-    
-    
-    public static boolean vastaakoSyote(String syote, Automaatti automaatti) {
-        return automaatti.annaSyote(syote);
-    }
-    
+    /**
+     * Kertoo vastaako annettu syöte
+     * säännöllisessä lausekkeessa määriteltyä muotoilua.
+     * @param syote Testattava merkkijono.
+     * @param regex Säännöllinen lauseke.
+     * @return True, jos syöte vastaa regexiä, muuten false.
+     */
     public static boolean vastaakoSyote(String syote, String regex) {
         return vastaakoSyote(syote, Automaatti.luoAutomaattiRegexista(regex));
+    }
+    
+    /**
+     * Kertoo hyväksyykö automaatti
+     * syötteen.
+     * @param syote Testattava merkkijono.
+     * @param automaatti Epädeterministinen äärellinen automaatti.
+     * @return True, jos automaatti hyväksyy syötteen, muuten false.
+     */
+    public static boolean vastaakoSyote(String syote, Automaatti automaatti) {
+        return automaatti.annaSyote(syote);
     }
     
     
     public static void main(String[] args) {
         
-        List<Tila> tilat = new ArrayList<>();
-        
-        
-        System.out.println(vastaakoSyote("abbbbbbbbb", "(a|(a)*b)*"));
     }
 }

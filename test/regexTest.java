@@ -96,6 +96,9 @@ public class regexTest {
         testaaja("(ab)*", "ababab");
         testaaja("(ab)*", "");
         testaaja("(ab)*", "c");
+        testaaja("(ab)+", "ab");
+        testaaja("(ab)+", "ab");
+        testaaja("(ab)+", "");
     }
     
     @Test
@@ -112,6 +115,9 @@ public class regexTest {
         testaaja("(c(ab)*c)*", "cabccabc");
         testaaja("(c(ab)*c)*", "cabccccabc");
         testaaja("(c(ab)*c)*", "cabcccacabc");
+        testaaja("((ab(ab)+))*", "abab");
+        testaaja("((ab(ab)+))*", "ababab");
+        testaaja("((ab(ab)+))*", "abababc");
     }
     
     

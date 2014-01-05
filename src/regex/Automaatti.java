@@ -13,12 +13,8 @@ import java.util.Stack;
  * @author Juho
  */
 public class Automaatti {
-
-    
-    
     private Tila alkutila;
     private Tila lopputila;
-    
     
     private Automaatti(Tila alkutila, Tila lopputila) {
         this.alkutila = alkutila;
@@ -41,7 +37,12 @@ public class Automaatti {
         
     }
     
-    
+    /**
+     * Valitsee oikean toiminnon
+     * syötteen merkin mukaan.
+     * @param merkki Käsiteltävä merkki.
+     * @param automaatit Pinossa olevat automaatit.
+     */
     private static void kasitteleMerkki(char merkki, Stack automaatit) {
         if(Character.isLetter(merkki)) {
             automaatit.push(luoKirjainautomaatti(merkki));
@@ -51,6 +52,8 @@ public class Automaatti {
             kasitteleLiitos(automaatit);
         } else if(merkki == '*') {
             kasitteleTahti(automaatit);
+        } else if(merkki == '+') {
+            kasittelePlus(automaatit);
         }
     }
     
@@ -68,8 +71,10 @@ public class Automaatti {
         Automaatti toistuva = (Automaatti) automaatit.pop();
         automaatit.push(luoTahtiautomaatti(toistuva));
     }
-    
-   
+    private static void kasittelePlus(Stack automaatit) {
+        Automaatti toistuva = (Automaatti) automaatit.pop();
+        automaatit.push(luoPlusautomaatti(toistuva));
+    }
     
     /**
      * Luo kaksitilaisen automaatin, joka hyväksyy ainoastaan yhden
@@ -111,7 +116,6 @@ public class Automaatti {
      * @return Automaatti-olio.
      */
     public static Automaatti luoTaiautomaatti(Automaatti joko, Automaatti tai) {
-        
         Tila automaatinAlkutila = new Tila();
         Tila automaatinLopputila = new Tila();
 
@@ -127,7 +131,7 @@ public class Automaatti {
      * Luo automaatin, joka hyväksyy syötteen,
      * jonka alkuperäinen automaatti hyväksyisi 
      * 0-ääretön kertaa.
-     * @param toistuva Toistuva automaatti
+     * @param toistuva Toistuva automaatti.
      * @return Automaatti-olio.
      */
     public static Automaatti luoTahtiautomaatti(Automaatti toistuva) {
@@ -141,6 +145,19 @@ public class Automaatti {
         
         
         return new Automaatti(automaatinAlkutila, automaatinLopputila);
+    }
+    
+    /**
+     * Luo automaatin, joka
+     * hyväksyy annetun syötteen,
+     * jonka alkuperäinen automaatti 
+     * hyväksyisi 1-ääretön kertaa.
+     * 
+     * @param toistuva Toistuva automaatti.
+     * @return Automaatti-olio.
+     */
+    public static Automaatti luoPlusautomaatti(Automaatti toistuva) {
+        return luoLiitosautomaatti(toistuva, luoTahtiautomaatti(toistuva));
     }
     
     /**
@@ -163,7 +180,7 @@ public class Automaatti {
         return nykyiset.contains(lopputila);
     }
     
-    public void kayLapiSiirtofunktiot(List<Tila> nykyiset, List<Tila> seuraavat, char kirjain) {
+    private void kayLapiSiirtofunktiot(List<Tila> nykyiset, List<Tila> seuraavat, char kirjain) {
         for(Tila t : nykyiset) {
             for(Siirtofunktio s : t.getSiirtofunktiot()) {
                 if(s.getHyvaksyttySyote() == null) {
@@ -188,7 +205,6 @@ public class Automaatti {
         }
         
     }
-    
     
     public Tila getAlkutila() {
         return alkutila;

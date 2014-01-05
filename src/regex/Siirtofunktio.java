@@ -4,7 +4,6 @@
  */
 package regex;
 
-import java.util.List;
 
 /**
  *
