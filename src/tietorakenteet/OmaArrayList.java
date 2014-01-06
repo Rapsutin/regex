@@ -32,6 +32,24 @@ public class OmaArrayList <E>{
     }
     
     /**
+     * Poistaa alkion annetusta
+     * indeksistä.
+     * @param indeksi 
+     */
+    public void poista(int indeksi) {
+        taulukko[indeksi] = null;
+        for (int i = indeksi + 1; i < seuraavaIndeksi; i++) {
+            taulukko[i-1] = taulukko[i];
+        }
+        taulukko[seuraavaIndeksi - 1] = null;
+        seuraavaIndeksi--;
+    }
+    
+    public void poistaViimeinen() {
+        poista(seuraavaIndeksi - 1);
+    }
+    
+    /**
      * Palauttaa listan alkion,
      * joka on annetussa indeksissä.
      * @param indeksi Listan indeksi.
@@ -42,6 +60,10 @@ public class OmaArrayList <E>{
             throw new IndexOutOfBoundsException();
         }
         return (E) taulukko[indeksi];
+    }
+    
+    public E getViimeinen() {
+        return get(seuraavaIndeksi - 1);
     }
     
     /**
@@ -64,6 +86,7 @@ public class OmaArrayList <E>{
             uusi[i] = kopioitava[i];
         }
     }
+    
     
     
     public int getAlkioidenMaara() {

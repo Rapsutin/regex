@@ -9,7 +9,23 @@ package tietorakenteet;
  *
  * @author Juho
  */
-public class OmaStack {
+public class OmaStack <E> {
 
+    private OmaArrayList<E> pino;
+
+    public OmaStack() {
+        pino = new OmaArrayList<>();
+    }
+    
+    public void push(E lisattava) {
+        pino.add(lisattava);
+    }
+    
+    public E pop() {
+        E popattu = pino.getViimeinen();
+        pino.poistaViimeinen();
+        return popattu;
+    }
+    
     
 }

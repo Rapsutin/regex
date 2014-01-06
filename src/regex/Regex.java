@@ -4,6 +4,8 @@
  */
 package regex;
 
+import java.util.ArrayList;
+
 
 /**
  *
@@ -39,6 +41,7 @@ public class Regex {
     
     
     public static void main(String[] args) {
+        ArrayList<Integer> testi = new ArrayList<>();
         
     }
 }

@@ -3,6 +3,7 @@
  * and open the template in the editor.
  */
 
+import java.util.ArrayList;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,7 +46,19 @@ public class OmaArrayListTest {
         }
     }
     
-    
+    @Test
+    public void poistaminen_toimii() {
+        testattava.add(1);
+        testattava.add(2);
+        testattava.add(3);
+        testattava.poista(0);
+        assertTrue(testattava.get(0) == 2);
+        assertTrue(testattava.get(1) == 3);
+        testattava.poista(1);
+        assertTrue(testattava.get(0) == 2);
+        assertTrue(testattava.getAlkioidenMaara() == 1);
+        
+    }
     
     
 }
