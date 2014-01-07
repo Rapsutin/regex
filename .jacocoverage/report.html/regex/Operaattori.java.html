@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fi"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Operaattori.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="right"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;Regex&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.html" class="el_package">regex</a> &gt; <span class="el_source">Operaattori.java</span></div><h1>Operaattori.java</h1><pre class="source lang-java linenums">/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package regex;
+
+/**
+ *
+ * @author Juho
+ */
+<span class="pc" id="L11">public enum Operaattori {</span>
+    /*
+     * Lähde: Compilers: Principles, Techniques, and Tools 
+     * Alfred V. Aho, Monica S. Lam, Ravi Sethi, Jeffrey D. Ullman
+     * (Sivut 121-122)
+     */
+<span class="fc" id="L17">    TAHTI(4, '*'),</span>
+<span class="fc" id="L18">    PLUS(4, '+'),</span>
+<span class="fc" id="L19">    KYSYMYSMERKKI(4, '?'),</span>
+<span class="fc" id="L20">    LIITOSMERKKI(3, '¤'),</span>
+<span class="fc" id="L21">    TAIMERKKI(2, '|');</span>
+    
+    private int laskujarjestys;
+    private char merkki;
+
+<span class="fc" id="L26">    private Operaattori(int laskujarjestys, char merkki) {</span>
+<span class="fc" id="L27">        this.laskujarjestys = laskujarjestys;</span>
+<span class="fc" id="L28">        this.merkki = merkki;</span>
+<span class="fc" id="L29">    }</span>
+    
+    /**
+     * Palauttaa merkkiä vastaavan operaattorin.
+     * @param c Merkki.
+     * @return Merkkiä vastaava operaattori. 
+     * Null, jos annetulle merkille ei löydy
+     * sopivaa operaattoria.
+     */
+    public static Operaattori valueOf(char c) {
+<span class="fc bfc" id="L39" title="All 6 branches covered.">        switch (c) {</span>
+<span class="fc" id="L40">            case '*': return TAHTI;</span>
+<span class="fc" id="L41">            case '+': return PLUS;</span>
+<span class="fc" id="L42">            case '?': return KYSYMYSMERKKI;</span>
+<span class="fc" id="L43">            case '¤': return LIITOSMERKKI;</span>
+<span class="fc" id="L44">            case '|': return TAIMERKKI;</span>
+        }
+<span class="fc" id="L46">        return null;</span>
+    }
+
+    public int getLaskujarjestys() {
+<span class="fc" id="L50">        return laskujarjestys;</span>
+    }
+    
+    public static boolean onkoOperaattori(char c) {
+<span class="fc bfc" id="L54" title="All 2 branches covered.">        if(valueOf(c) == null) {</span>
+<span class="fc" id="L55">            return false;</span>
+        }
+<span class="fc" id="L57">        return true;</span>
+    }
+    
+    @Override
+    public String toString() {
+<span class="fc" id="L62">        return &quot;&quot;+merkki;</span>
+    }
+    
+    
+    
+    
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.3.201306030806</span></div></body></html>

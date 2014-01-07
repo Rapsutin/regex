@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fi"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Automaatti.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="right"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;Regex&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.html" class="el_package">regex</a> &gt; <span class="el_source">Automaatti.java</span></div><h1>Automaatti.java</h1><pre class="source lang-java linenums">/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package regex;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+
+/**
+ * Epädeterministinen äärellinen automaatti.
+ * @author Juho
+ */
+public class Automaatti {
+    private Tila alkutila;
+    private Tila lopputila;
+    
+<span class="fc" id="L19">    private Automaatti(Tila alkutila, Tila lopputila) {</span>
+<span class="fc" id="L20">        this.alkutila = alkutila;</span>
+<span class="fc" id="L21">        this.lopputila = lopputila;</span>
+<span class="fc" id="L22">    }</span>
+    
+    /**
+     * Luo automaatin annetun tavallisessa muodossa
+     * olevan säännöllisen lausekkeen perusteella.
+     * @param infix Tavallisessa muodossa oleva säännöllinen lauseke.
+     * @return 
+     */
+    public static Automaatti luoAutomaattiRegexista(String infix) {
+<span class="fc" id="L31">        String postfix = KaanteinenNotaatio.muunnaKaanteiseksi(infix);</span>
+<span class="fc" id="L32">        Stack automaatit = new Stack();</span>
+<span class="fc bfc" id="L33" title="All 2 branches covered.">        for (int i = 0; i &lt; postfix.length(); i++) {</span>
+<span class="fc" id="L34">            kasitteleMerkki(postfix.charAt(i), automaatit);</span>
+        }
+<span class="fc" id="L36">        return (Automaatti) automaatit.firstElement();</span>
+        
+    }
+    
+    /**
+     * Valitsee oikean toiminnon
+     * syötteen merkin mukaan.
+     * @param merkki Käsiteltävä merkki.
+     * @param automaatit Pinossa olevat automaatit.
+     */
+    private static void kasitteleMerkki(char merkki, Stack automaatit) {
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        if(Character.isLetter(merkki)) {</span>
+<span class="fc" id="L48">            automaatit.push(luoKirjainautomaatti(merkki));</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        } else if(merkki == '|') {</span>
+<span class="fc" id="L50">            kasitteleTai(automaatit);</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        } else if(merkki == '¤') {</span>
+<span class="fc" id="L52">            kasitteleLiitos(automaatit);</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        } else if(merkki == '*') {</span>
+<span class="fc" id="L54">            kasitteleTahti(automaatit);</span>
+<span class="pc bpc" id="L55" title="1 of 2 branches missed.">        } else if(merkki == '+') {</span>
+<span class="fc" id="L56">            kasittelePlus(automaatit);</span>
+        }
+<span class="fc" id="L58">    }</span>
+    
+    private static void kasitteleTai(Stack automaatit) {
+<span class="fc" id="L61">        Automaatti toinen = (Automaatti) automaatit.pop();</span>
+<span class="fc" id="L62">        Automaatti ensimmainen = (Automaatti) automaatit.pop();</span>
+<span class="fc" id="L63">        automaatit.push(luoTaiautomaatti(toinen, ensimmainen));</span>
+<span class="fc" id="L64">    }</span>
+    private static void kasitteleLiitos(Stack automaatit) {
+<span class="fc" id="L66">        Automaatti toinen = (Automaatti) automaatit.pop();</span>
+<span class="fc" id="L67">        Automaatti ensimmainen = (Automaatti) automaatit.pop();</span>
+<span class="fc" id="L68">        automaatit.push(luoLiitosautomaatti(ensimmainen, toinen));</span>
+<span class="fc" id="L69">    }</span>
+    private static void kasitteleTahti(Stack automaatit) {
+<span class="fc" id="L71">        Automaatti toistuva = (Automaatti) automaatit.pop();</span>
+<span class="fc" id="L72">        automaatit.push(luoTahtiautomaatti(toistuva));</span>
+<span class="fc" id="L73">    }</span>
+    private static void kasittelePlus(Stack automaatit) {
+<span class="fc" id="L75">        Automaatti toistuva = (Automaatti) automaatit.pop();</span>
+<span class="fc" id="L76">        automaatit.push(luoPlusautomaatti(toistuva));</span>
+<span class="fc" id="L77">    }</span>
+    
+    /**
+     * Luo kaksitilaisen automaatin, joka hyväksyy ainoastaan yhden
+     * syötteen.
+     * @param hyvaksyttySyote Syöte, jonka automaatti hyväksyy.
+     * @return Automaatti-olio.
+     */
+    public static Automaatti luoKirjainautomaatti (Character hyvaksyttySyote) {
+       
+<span class="fc" id="L87">        Tila automaatinAlkutila = new Tila();</span>
+<span class="fc" id="L88">        Tila automaatinLopputila = new Tila();</span>
+        
+<span class="fc" id="L90">        automaatinAlkutila.lisaaSiirtofunktio(new Siirtofunktio(automaatinLopputila, hyvaksyttySyote));</span>
+<span class="fc" id="L91">        return new Automaatti(automaatinAlkutila, automaatinLopputila);</span>
+    }
+    
+    /**
+     * Luo automaatin, jossa on
+     * kaksi automaattia &quot;sarjassa.&quot;
+     * @param edeltava Automaatin ensimmäinen osa.
+     * @param jalkimmainen Automaatin jälkimmäinen osa.
+     * @return Automaatti-olio.
+     */
+    public static Automaatti luoLiitosautomaatti(Automaatti edeltava, Automaatti jalkimmainen) {
+<span class="fc" id="L102">        Tila automaatinAlkutila = edeltava.getAlkutila();</span>
+<span class="fc" id="L103">        Tila automaatinLopputila = jalkimmainen.getLopputila();</span>
+<span class="fc" id="L104">        edeltava.getLopputila().lisaaSiirtofunktio(new Siirtofunktio(jalkimmainen.getAlkutila(), null));</span>
+        
+<span class="fc" id="L106">        return new Automaatti(automaatinAlkutila, automaatinLopputila);</span>
+    }
+    
+    /**
+     * Luo automaatin, jossa on
+     * kaksi automaattia &quot;rinnan.&quot;
+     * Automaatti hyväksyy syötteen, jonka
+     * jompi kumpi automaateista hyväksyy.
+     * @param joko Ensimmainen vaihtoehto
+     * @param tai Toinen vaihtoehto
+     * @return Automaatti-olio.
+     */
+    public static Automaatti luoTaiautomaatti(Automaatti joko, Automaatti tai) {
+<span class="fc" id="L119">        Tila automaatinAlkutila = new Tila();</span>
+<span class="fc" id="L120">        Tila automaatinLopputila = new Tila();</span>
+
+<span class="fc" id="L122">        automaatinAlkutila.lisaaSiirtofunktio(new Siirtofunktio(joko.getAlkutila(), null));</span>
+<span class="fc" id="L123">        automaatinAlkutila.lisaaSiirtofunktio(new Siirtofunktio(tai.getAlkutila(), null));</span>
+<span class="fc" id="L124">        joko.getLopputila().lisaaSiirtofunktio(new Siirtofunktio(automaatinLopputila, null));</span>
+<span class="fc" id="L125">        tai.getLopputila().lisaaSiirtofunktio(new Siirtofunktio(automaatinLopputila, null));</span>
+
+<span class="fc" id="L127">        return new Automaatti(automaatinAlkutila, automaatinLopputila);</span>
+    }
+    
+    /**
+     * Luo automaatin, joka hyväksyy syötteen,
+     * jonka alkuperäinen automaatti hyväksyisi 
+     * 0-ääretön kertaa.
+     * @param toistuva Toistuva automaatti.
+     * @return Automaatti-olio.
+     */
+    public static Automaatti luoTahtiautomaatti(Automaatti toistuva) {
+<span class="fc" id="L138">        Tila automaatinAlkutila = new Tila();</span>
+<span class="fc" id="L139">        Tila automaatinLopputila = new Tila();</span>
+        
+<span class="fc" id="L141">        automaatinAlkutila.lisaaSiirtofunktio(new Siirtofunktio(toistuva.alkutila, null));</span>
+<span class="fc" id="L142">        automaatinAlkutila.lisaaSiirtofunktio(new Siirtofunktio(automaatinLopputila, null));</span>
+<span class="fc" id="L143">        toistuva.getLopputila().lisaaSiirtofunktio(new Siirtofunktio(toistuva.getAlkutila(), null));</span>
+<span class="fc" id="L144">        toistuva.getLopputila().lisaaSiirtofunktio(new Siirtofunktio(automaatinLopputila, null));</span>
+        
+        
+<span class="fc" id="L147">        return new Automaatti(automaatinAlkutila, automaatinLopputila);</span>
+    }
+    
+    /**
+     * Luo automaatin, joka
+     * hyväksyy annetun syötteen,
+     * jonka alkuperäinen automaatti 
+     * hyväksyisi 1-ääretön kertaa.
+     * 
+     * @param toistuva Toistuva automaatti.
+     * @return Automaatti-olio.
+     */
+    public static Automaatti luoPlusautomaatti(Automaatti toistuva) {
+<span class="fc" id="L160">        return luoLiitosautomaatti(toistuva, luoTahtiautomaatti(toistuva));</span>
+    }
+    
+    /**
+     * Antaa automaatille syötejonon.
+     * @param syote Syötejono.
+     */
+    public boolean annaSyote(String syote) {
+<span class="fc" id="L168">        List&lt;Tila&gt; nykyiset = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L169">        List&lt;Tila&gt; seuraavat = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L170">        lisaaSeuraaviin(alkutila, seuraavat);</span>
+<span class="fc" id="L171">        nykyiset = seuraavat;</span>
+<span class="fc" id="L172">        seuraavat = new ArrayList&lt;&gt;();</span>
+        
+<span class="fc bfc" id="L174" title="All 2 branches covered.">        for (int i = 0; i &lt; syote.length(); i++) {</span>
+<span class="fc" id="L175">            char kirjain = syote.charAt(i);</span>
+<span class="fc" id="L176">            kayLapiSiirtofunktiot(nykyiset, seuraavat, kirjain);</span>
+<span class="fc" id="L177">            nykyiset = seuraavat;</span>
+<span class="fc" id="L178">            seuraavat = new ArrayList&lt;&gt;();</span>
+        }
+<span class="fc" id="L180">        return nykyiset.contains(lopputila);</span>
+    }
+    
+    private void kayLapiSiirtofunktiot(List&lt;Tila&gt; nykyiset, List&lt;Tila&gt; seuraavat, char kirjain) {
+<span class="fc bfc" id="L184" title="All 2 branches covered.">        for(Tila t : nykyiset) {</span>
+<span class="fc bfc" id="L185" title="All 2 branches covered.">            for(Siirtofunktio s : t.getSiirtofunktiot()) {</span>
+<span class="fc bfc" id="L186" title="All 2 branches covered.">                if(s.getHyvaksyttySyote() == null) {</span>
+<span class="fc" id="L187">                    continue;</span>
+                }
+<span class="fc bfc" id="L189" title="All 2 branches covered.">                if(s.getHyvaksyttySyote() == kirjain) {</span>
+<span class="fc" id="L190">                    lisaaSeuraaviin(s.getLopputila(), seuraavat);</span>
+                }
+<span class="fc" id="L192">            }</span>
+<span class="fc" id="L193">        }</span>
+<span class="fc" id="L194">    }</span>
+    
+    public void lisaaSeuraaviin(Tila lisattava, List&lt;Tila&gt; seuraavat) {
+<span class="fc bfc" id="L197" title="All 2 branches covered.">        if(seuraavat.contains(lisattava)) {</span>
+<span class="fc" id="L198">            return;</span>
+        }
+<span class="fc" id="L200">        seuraavat.add(lisattava);</span>
+<span class="fc bfc" id="L201" title="All 2 branches covered.">        for(Siirtofunktio s : lisattava.getSiirtofunktiot()) {</span>
+<span class="fc bfc" id="L202" title="All 2 branches covered.">            if(s.getHyvaksyttySyote() == null) {</span>
+<span class="fc" id="L203">                lisaaSeuraaviin(s.getLopputila(), seuraavat);</span>
+            }
+<span class="fc" id="L205">        }</span>
+        
+<span class="fc" id="L207">    }</span>
+    
+    public Tila getAlkutila() {
+<span class="fc" id="L210">        return alkutila;</span>
+    }
+
+    public Tila getLopputila() {
+<span class="fc" id="L214">        return lopputila;</span>
+    }
+    
+     public void setAlkutila(Tila alkutila) {
+<span class="nc" id="L218">        this.alkutila = alkutila;</span>
+<span class="nc" id="L219">    }</span>
+
+    public void setLopputila(Tila lopputila) {
+<span class="nc" id="L222">        this.lopputila = lopputila;</span>
+<span class="nc" id="L223">    }</span>
+    
+   
+    
+    
+    
+    
+    
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.3.201306030806</span></div></body></html>

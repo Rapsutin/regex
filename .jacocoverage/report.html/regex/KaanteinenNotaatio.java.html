@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fi"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>KaanteinenNotaatio.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="right"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;Regex&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.html" class="el_package">regex</a> &gt; <span class="el_source">KaanteinenNotaatio.java</span></div><h1>KaanteinenNotaatio.java</h1><pre class="source lang-java linenums">/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package regex;
+
+import java.util.Stack;
+
+/**
+ *Luokan avulla voidaan muuttaa tavallisessa muodossa olevia
+ * sännöllisiä lausekkeita käänteiseksi puolalaiseksi notaatioksi.
+ * @author Juho
+ */
+public final class KaanteinenNotaatio {
+
+<span class="nc" id="L16">    private KaanteinenNotaatio() {}</span>
+
+    /**
+     * Muuntaa annetun syötteen käänteiseksi puolalaiseksi
+     * notaatioksi, jonka avulla voidaan rakentaa helposti
+     * säännöllisiä lausekkeita tulkkaava automaatti.
+     * @param infix Tavallisessa muodossa oleva säännöllinen lauseke.
+     * @return Käänteisessä muodossa oleva säännöllinen lauseke.
+     */
+    public static String muunnaKaanteiseksi(String infix) {
+<span class="fc" id="L26">        Stack pino = new Stack();</span>
+<span class="fc" id="L27">        String infixLiitoksilla = merkitseLiitokset(infix);</span>
+<span class="fc" id="L28">        StringBuilder output = new StringBuilder();</span>
+        
+<span class="fc bfc" id="L30" title="All 2 branches covered.">        for (int i = 0; i &lt; infixLiitoksilla.length(); i++) {</span>
+<span class="fc" id="L31">            char kasiteltavaMerkki = infixLiitoksilla.charAt(i);</span>
+<span class="fc" id="L32">            kasitteleMerkki(kasiteltavaMerkki, output, pino);</span>
+        }
+        
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        while(!pino.empty()) {</span>
+<span class="fc" id="L36">            output.append(pino.pop());</span>
+        }
+<span class="fc" id="L38">        return output.toString();</span>
+    }
+    
+    /* Käsittely perustuu shunting-yard -algoritmiin.
+     * http://en.wikipedia.org/wiki/Shunting-yard_algorithm
+     */
+    private static void kasitteleMerkki(char kasiteltavaMerkki, StringBuilder output, Stack pino) {
+        
+            
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        if(Operaattori.valueOf(kasiteltavaMerkki) != null) {</span>
+<span class="fc" id="L48">            kasitteleOperaattori(kasiteltavaMerkki, pino, output);</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        } else if(kasiteltavaMerkki == '(') {</span>
+<span class="fc" id="L50">            pino.push('(');</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        } else if(kasiteltavaMerkki == ')') {</span>
+<span class="fc" id="L52">            kasitteleOikeaSulku(pino, output);</span>
+        } else {
+<span class="fc" id="L54">            output.append(kasiteltavaMerkki);</span>
+        }
+<span class="fc" id="L56">    }</span>
+    
+    private static void kasitteleOperaattori(char kasiteltavaMerkki, Stack pino, StringBuilder output) {
+<span class="fc" id="L59">        Operaattori kasiteltavaOperaattori = Operaattori.valueOf(kasiteltavaMerkki);</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">        while(!pino.isEmpty()) {</span>
+            
+<span class="fc bfc" id="L62" title="All 2 branches covered.">            if(pino.peek().getClass() != Operaattori.class) {</span>
+<span class="fc" id="L63">                break;</span>
+            }
+<span class="fc" id="L65">            Operaattori seuraavaPinonJasen = (Operaattori) pino.peek();</span>
+            
+<span class="fc bfc" id="L67" title="All 2 branches covered.">            if(seuraavaPinonJasen.getLaskujarjestys() </span>
+                    &gt;= kasiteltavaOperaattori.getLaskujarjestys()) {
+<span class="fc" id="L69">                output.append ((Operaattori) pino.pop());</span>
+            } else { 
+                break; 
+            }
+<span class="fc" id="L73">        }</span>
+<span class="fc" id="L74">        pino.push(Operaattori.valueOf(kasiteltavaMerkki));</span>
+<span class="fc" id="L75">    }</span>
+
+    private static void kasitteleOikeaSulku(Stack pino, StringBuilder output) {
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        while(pino.peek() != '(') {</span>
+<span class="fc" id="L79">            output.append(pino.pop());</span>
+        }
+<span class="fc" id="L81">        pino.pop();</span>
+<span class="fc" id="L82">    }</span>
+    
+    
+    /**
+     * Lisää säännölliseen lausekkeeseen liitosmerkit &quot;¤&quot;,
+     * jotta lauseke olisi helpompi muuttaa käänteiseksi
+     * puolalaiseksi notaatioksi.
+     * 
+     * @return Tavallisessa muodossa oleva säännöllinen lauseke liitosmerkeillä &quot;¤&quot;
+     */
+    public static String merkitseLiitokset(String infix) {
+        
+<span class="fc" id="L94">        String infixLiitoksilla = &quot;&quot;;</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">        for (int i = 0; i &lt; infix.length(); i++) {</span>
+<span class="fc bfc" id="L96" title="All 8 branches covered.">            if(        onkoKaksiKirjaintaPerakkain(infix, i) </span>
+                    || onkoKirjainJaVasenSulkuPerakkain(infix, i)
+                    || onkoOsanPaattavaOperaattoriJaKirjainPerakkain(infix, i)
+                    || onkoOsanPaattavaOperaattoriJaVasenSulkuPerakkain(infix, i)) {
+                
+<span class="fc" id="L101">                infixLiitoksilla += &quot;¤&quot;;</span>
+            }
+            
+<span class="fc" id="L104">            infixLiitoksilla += &quot;&quot;+infix.charAt(i);</span>
+        }
+<span class="fc" id="L106">        return infixLiitoksilla;</span>
+    }
+    
+    private static boolean onkoKaksiKirjaintaPerakkain(String infix, int indeksi) {
+<span class="fc bfc" id="L110" title="All 2 branches covered.">        if(indeksi &gt;= 1) { </span>
+<span class="fc bfc" id="L111" title="All 4 branches covered.">            if(Character.isLetter(infix.charAt(indeksi-1)) &amp;&amp; Character.isLetter(infix.charAt(indeksi))) {</span>
+<span class="fc" id="L112">                return true;</span>
+            }
+        }
+<span class="fc" id="L115">        return false;</span>
+    }
+    
+    private static boolean onkoKirjainJaVasenSulkuPerakkain(String infix, int indeksi) {
+<span class="fc bfc" id="L119" title="All 2 branches covered.">        if(indeksi &gt;= 1) { </span>
+<span class="fc bfc" id="L120" title="All 4 branches covered.">            if(Character.isLetter(infix.charAt(indeksi-1)) &amp;&amp; infix.charAt(indeksi) == '(') {</span>
+<span class="fc" id="L121">                return true;</span>
+            }
+        }
+<span class="fc" id="L124">        return false;</span>
+    }
+    
+    private static boolean onkoOsanPaattavaOperaattoriJaKirjainPerakkain(String infix, int indeksi) {
+        
+<span class="fc bfc" id="L129" title="All 2 branches covered.">        if(indeksi &gt;= 1) {</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">            if(onkoKvanttoriIndeksissa(infix, indeksi - 1)) {</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">                if(Character.isLetter(infix.charAt(indeksi))) {</span>
+<span class="fc" id="L132">                    return true;</span>
+                }
+            }
+        }
+<span class="fc" id="L136">        return false;</span>
+    }
+    
+    private static boolean onkoOsanPaattavaOperaattoriJaVasenSulkuPerakkain(String infix, int indeksi) {
+<span class="fc bfc" id="L140" title="All 2 branches covered.">        if(indeksi &gt;= 1) {</span>
+<span class="fc bfc" id="L141" title="All 4 branches covered.">            if(infix.charAt(indeksi) == '(' &amp;&amp; onkoKvanttoriIndeksissa(infix, indeksi - 1)) {</span>
+<span class="fc" id="L142">                return true;</span>
+            }
+        }
+<span class="fc" id="L145">        return false;</span>
+    }
+    
+    private static boolean onkoKvanttoriIndeksissa(String infix, int indeksi) {
+<span class="fc" id="L149">         return onkoKvanttori(infix.charAt(indeksi));</span>
+    }
+    private static boolean onkoKvanttori(char c) {
+<span class="fc bfc" id="L152" title="All 6 branches covered.">        return     c == '*'|| c == '+'|| c == '?';</span>
+    }
+
+    
+
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.6.3.201306030806</span></div></body></html>

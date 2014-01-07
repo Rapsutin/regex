@@ -45,6 +45,16 @@ public class OmaArrayListTest {
             assertTrue(i == testattava.get(i));
         }
     }
+    @Test
+    public void onnistuuko_suuren_maaran_talletus() {
+        for (int i = 0; i < Integer.MAX_VALUE/500; i++) {
+            testattava.add(i);
+        }
+        assertTrue(testattava.getAlkioidenMaara() == Integer.MAX_VALUE/500);
+        for (int i = 0; i < Integer.MAX_VALUE/500; i++) {
+            assertTrue(testattava.get(i) == i);
+        }
+    }
     
     @Test
     public void poistaminen_toimii() {
@@ -57,7 +67,6 @@ public class OmaArrayListTest {
         testattava.poista(1);
         assertTrue(testattava.get(0) == 2);
         assertTrue(testattava.getAlkioidenMaara() == 1);
-        
     }
     
     

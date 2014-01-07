@@ -12,6 +12,7 @@ import regex.Automaatti;
 import regex.Regex;
 import static org.junit.Assert.*;
 import regex.KaanteinenNotaatio;
+import regex.Operaattori;
 
 /**
  *
@@ -40,11 +41,6 @@ public class regexTest {
     @After
     public void tearDown() {
     }
-    
-    
-    
-   
-   
     
     @Test
     public void lisaako_merkitseLiitokset_liitosmerkin_kirjainten_valiin() {
@@ -77,10 +73,33 @@ public class regexTest {
     
     @Test
     public void toimivatko_sululliset_muutokset() {
-        
         assertEquals("ab¤*", KaanteinenNotaatio.muunnaKaanteiseksi("(ab)*"));
         assertEquals("ab|*a¤", KaanteinenNotaatio.muunnaKaanteiseksi("(a|b)*a"));
         assertEquals("aab¤*|*c¤", KaanteinenNotaatio.muunnaKaanteiseksi("(a|(ab)*)*c"));
+    }
+    
+    @Test
+    public void toimiiko_Operaattorin_valueOf_oikein() {
+        assertEquals(Operaattori.TAHTI, Operaattori.valueOf('*'));
+        assertEquals(Operaattori.PLUS, Operaattori.valueOf('+'));
+        assertEquals(Operaattori.KYSYMYSMERKKI, Operaattori.valueOf('?'));
+        assertEquals(Operaattori.LIITOSMERKKI, Operaattori.valueOf('¤'));
+        assertEquals(Operaattori.TAIMERKKI, Operaattori.valueOf('|'));
+    }
+    
+    @Test
+    public void testaa_onko_operaattoria() {
+        assertTrue(Operaattori.onkoOperaattori('*'));
+        assertTrue(!Operaattori.onkoOperaattori('%'));
+        assertTrue(!Operaattori.onkoOperaattori('a'));
+    }
+    
+    @Test
+    public void toimiiko_luoAutomaattiRegexista_yhdella_kirjaimella() {
+        Automaatti testattava2 = Automaatti.luoAutomaattiRegexista("a");
+        assertTrue(testattava2.annaSyote("a"));
+        assertTrue(!testattava2.annaSyote("ab"));
+        assertTrue(!testattava2.annaSyote(""));
     }
     
     
@@ -89,16 +108,36 @@ public class regexTest {
     }
     
     @Test
-    public void testaa_yksinkertaisia_saannollisia_lausekkeita() {
+    public void testaa_tailausekkeita() {
         testaaja("a|b", "a");
         testaaja("ab|b", "ab");
         testaaja("ab|b", "c");
+    }
+    
+    @Test 
+    public void testaa_tahtilausekkeita() {
         testaaja("(ab)*", "ababab");
         testaaja("(ab)*", "");
         testaaja("(ab)*", "c");
+    }
+    
+    @Test
+    public void testaa_pluslausekkeita() {
         testaaja("(ab)+", "ab");
         testaaja("(ab)+", "ab");
         testaaja("(ab)+", "");
+        testaaja("(a)+", "a");
+        testaaja("(a)+", "");
+        testaaja("(a)+", "aa");
+    }
+    
+    @Test
+    public void testaa_liitoslausekkeita() {
+        testaaja("ab", "ab");
+        testaaja("ab", "a");
+        testaaja("ab", "b");
+        testaaja("ab", "abab");
+        testaaja("ab", "");
     }
     
     @Test
@@ -118,6 +157,21 @@ public class regexTest {
         testaaja("((ab(ab)+))*", "abab");
         testaaja("((ab(ab)+))*", "ababab");
         testaaja("((ab(ab)+))*", "abababc");
+    }
+    
+    @Test
+    public void yrita_rikkoa_jarjestelma() {
+        Automaatti automaatti = Automaatti.luoAutomaattiRegexista("a");
+        for (int i = 0; i < 1000; i++) {
+            automaatti = Automaatti.luoTaiautomaatti(automaatti, automaatti);
+        }
+        assertTrue(automaatti.annaSyote("a"));
+        
+        for (int i = 0; i < 1000; i++) {
+            automaatti = Automaatti.luoTaiautomaatti(automaatti, Automaatti.luoAutomaattiRegexista("b"));
+        }
+        assertTrue(automaatti.annaSyote("b"));
+        assertTrue(!automaatti.annaSyote("ab"));
     }
     
     
