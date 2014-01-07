@@ -50,7 +50,7 @@ public class OmaArrayListTest {
         for (int i = 0; i < Integer.MAX_VALUE/500; i++) {
             testattava.add(i);
         }
-        assertTrue(testattava.getAlkioidenMaara() == Integer.MAX_VALUE/500);
+        assertTrue(testattava.size() == Integer.MAX_VALUE/500);
         for (int i = 0; i < Integer.MAX_VALUE/500; i++) {
             assertTrue(testattava.get(i) == i);
         }
@@ -61,12 +61,24 @@ public class OmaArrayListTest {
         testattava.add(1);
         testattava.add(2);
         testattava.add(3);
-        testattava.poista(0);
+        testattava.remove(0);
         assertTrue(testattava.get(0) == 2);
         assertTrue(testattava.get(1) == 3);
-        testattava.poista(1);
+        testattava.remove(1);
         assertTrue(testattava.get(0) == 2);
-        assertTrue(testattava.getAlkioidenMaara() == 1);
+        assertTrue(testattava.size() == 1);
+    }
+    
+    @Test
+    public void contains_toimii() {
+        testattava.add(4);
+        testattava.add(7);
+        assertTrue(testattava.contains(4));
+        assertTrue(testattava.contains(7));
+        assertTrue(!testattava.contains(6));
+        testattava.remove(0);
+        assertTrue(!testattava.contains(4));
+        
     }
     
     

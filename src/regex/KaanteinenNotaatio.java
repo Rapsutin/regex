@@ -4,7 +4,7 @@
  */
 package regex;
 
-import java.util.Stack;
+import tietorakenteet.OmaStack;
 
 /**
  *Luokan avulla voidaan muuttaa tavallisessa muodossa olevia
@@ -23,7 +23,7 @@ public final class KaanteinenNotaatio {
      * @return Käänteisessä muodossa oleva säännöllinen lauseke.
      */
     public static String muunnaKaanteiseksi(String infix) {
-        Stack pino = new Stack();
+        OmaStack pino = new OmaStack();
         String infixLiitoksilla = merkitseLiitokset(infix);
         StringBuilder output = new StringBuilder();
         
@@ -32,7 +32,7 @@ public final class KaanteinenNotaatio {
             kasitteleMerkki(kasiteltavaMerkki, output, pino);
         }
         
-        while(!pino.empty()) {
+        while(!pino.isEmpty()) {
             output.append(pino.pop());
         }
         return output.toString();
@@ -41,7 +41,7 @@ public final class KaanteinenNotaatio {
     /* Käsittely perustuu shunting-yard -algoritmiin.
      * http://en.wikipedia.org/wiki/Shunting-yard_algorithm
      */
-    private static void kasitteleMerkki(char kasiteltavaMerkki, StringBuilder output, Stack pino) {
+    private static void kasitteleMerkki(char kasiteltavaMerkki, StringBuilder output, OmaStack pino) {
         
             
         if(Operaattori.valueOf(kasiteltavaMerkki) != null) {
@@ -55,7 +55,7 @@ public final class KaanteinenNotaatio {
         }
     }
     
-    private static void kasitteleOperaattori(char kasiteltavaMerkki, Stack pino, StringBuilder output) {
+    private static void kasitteleOperaattori(char kasiteltavaMerkki, OmaStack pino, StringBuilder output) {
         Operaattori kasiteltavaOperaattori = Operaattori.valueOf(kasiteltavaMerkki);
         while(!pino.isEmpty()) {
             
@@ -74,7 +74,7 @@ public final class KaanteinenNotaatio {
         pino.push(Operaattori.valueOf(kasiteltavaMerkki));
     }
 
-    private static void kasitteleOikeaSulku(Stack pino, StringBuilder output) {
+    private static void kasitteleOikeaSulku(OmaStack pino, StringBuilder output) {
         while(pino.peek() != '(') {
             output.append(pino.pop());
         }

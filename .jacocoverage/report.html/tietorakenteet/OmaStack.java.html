@@ -22,9 +22,21 @@ public class OmaStack &lt;E&gt; {
 <span class="fc" id="L22">    }</span>
     
     public E pop() {
-<span class="fc" id="L25">        E popattu = pino.getViimeinen();</span>
-<span class="fc" id="L26">        pino.poistaViimeinen();</span>
+<span class="fc" id="L25">        E popattu = pino.getLast();</span>
+<span class="fc" id="L26">        pino.removeLast();</span>
 <span class="fc" id="L27">        return popattu;</span>
+    }
+    
+    public boolean isEmpty() {
+<span class="fc bfc" id="L31" title="All 2 branches covered.">        return pino.size() == 0;</span>
+    }
+    
+    public E firstElement() {
+<span class="fc" id="L35">        return pino.getFirst();</span>
+    }
+    
+    public E peek() {
+<span class="fc" id="L39">        return pino.getLast();</span>
     }
     
     

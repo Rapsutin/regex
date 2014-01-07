@@ -4,9 +4,13 @@
  */
 package regex;
 
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
+import tietorakenteet.OmaArrayList;
+
+import tietorakenteet.OmaStack;
+
 
 /**
  * Epädeterministinen äärellinen automaatti.
@@ -16,10 +20,10 @@ public class Automaatti {
     private Tila alkutila;
     private Tila lopputila;
     
-<span class="fc" id="L19">    private Automaatti(Tila alkutila, Tila lopputila) {</span>
-<span class="fc" id="L20">        this.alkutila = alkutila;</span>
-<span class="fc" id="L21">        this.lopputila = lopputila;</span>
-<span class="fc" id="L22">    }</span>
+<span class="fc" id="L23">    private Automaatti(Tila alkutila, Tila lopputila) {</span>
+<span class="fc" id="L24">        this.alkutila = alkutila;</span>
+<span class="fc" id="L25">        this.lopputila = lopputila;</span>
+<span class="fc" id="L26">    }</span>
     
     /**
      * Luo automaatin annetun tavallisessa muodossa
@@ -28,12 +32,12 @@ public class Automaatti {
      * @return 
      */
     public static Automaatti luoAutomaattiRegexista(String infix) {
-<span class="fc" id="L31">        String postfix = KaanteinenNotaatio.muunnaKaanteiseksi(infix);</span>
-<span class="fc" id="L32">        Stack automaatit = new Stack();</span>
-<span class="fc bfc" id="L33" title="All 2 branches covered.">        for (int i = 0; i &lt; postfix.length(); i++) {</span>
-<span class="fc" id="L34">            kasitteleMerkki(postfix.charAt(i), automaatit);</span>
+<span class="fc" id="L35">        String postfix = KaanteinenNotaatio.muunnaKaanteiseksi(infix);</span>
+<span class="fc" id="L36">        OmaStack automaatit = new OmaStack();</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">        for (int i = 0; i &lt; postfix.length(); i++) {</span>
+<span class="fc" id="L38">            kasitteleMerkki(postfix.charAt(i), automaatit);</span>
         }
-<span class="fc" id="L36">        return (Automaatti) automaatit.firstElement();</span>
+<span class="fc" id="L40">        return (Automaatti) automaatit.firstElement();</span>
         
     }
     
@@ -43,38 +47,38 @@ public class Automaatti {
      * @param merkki Käsiteltävä merkki.
      * @param automaatit Pinossa olevat automaatit.
      */
-    private static void kasitteleMerkki(char merkki, Stack automaatit) {
-<span class="fc bfc" id="L47" title="All 2 branches covered.">        if(Character.isLetter(merkki)) {</span>
-<span class="fc" id="L48">            automaatit.push(luoKirjainautomaatti(merkki));</span>
-<span class="fc bfc" id="L49" title="All 2 branches covered.">        } else if(merkki == '|') {</span>
-<span class="fc" id="L50">            kasitteleTai(automaatit);</span>
-<span class="fc bfc" id="L51" title="All 2 branches covered.">        } else if(merkki == '¤') {</span>
-<span class="fc" id="L52">            kasitteleLiitos(automaatit);</span>
-<span class="fc bfc" id="L53" title="All 2 branches covered.">        } else if(merkki == '*') {</span>
-<span class="fc" id="L54">            kasitteleTahti(automaatit);</span>
-<span class="pc bpc" id="L55" title="1 of 2 branches missed.">        } else if(merkki == '+') {</span>
-<span class="fc" id="L56">            kasittelePlus(automaatit);</span>
+    private static void kasitteleMerkki(char merkki, OmaStack automaatit) {
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        if(Character.isLetter(merkki)) {</span>
+<span class="fc" id="L52">            automaatit.push(luoKirjainautomaatti(merkki));</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        } else if(merkki == '|') {</span>
+<span class="fc" id="L54">            kasitteleTai(automaatit);</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        } else if(merkki == '¤') {</span>
+<span class="fc" id="L56">            kasitteleLiitos(automaatit);</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">        } else if(merkki == '*') {</span>
+<span class="fc" id="L58">            kasitteleTahti(automaatit);</span>
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">        } else if(merkki == '+') {</span>
+<span class="fc" id="L60">            kasittelePlus(automaatit);</span>
         }
-<span class="fc" id="L58">    }</span>
+<span class="fc" id="L62">    }</span>
     
-    private static void kasitteleTai(Stack automaatit) {
-<span class="fc" id="L61">        Automaatti toinen = (Automaatti) automaatit.pop();</span>
-<span class="fc" id="L62">        Automaatti ensimmainen = (Automaatti) automaatit.pop();</span>
-<span class="fc" id="L63">        automaatit.push(luoTaiautomaatti(toinen, ensimmainen));</span>
-<span class="fc" id="L64">    }</span>
-    private static void kasitteleLiitos(Stack automaatit) {
-<span class="fc" id="L66">        Automaatti toinen = (Automaatti) automaatit.pop();</span>
-<span class="fc" id="L67">        Automaatti ensimmainen = (Automaatti) automaatit.pop();</span>
-<span class="fc" id="L68">        automaatit.push(luoLiitosautomaatti(ensimmainen, toinen));</span>
-<span class="fc" id="L69">    }</span>
-    private static void kasitteleTahti(Stack automaatit) {
-<span class="fc" id="L71">        Automaatti toistuva = (Automaatti) automaatit.pop();</span>
-<span class="fc" id="L72">        automaatit.push(luoTahtiautomaatti(toistuva));</span>
+    private static void kasitteleTai(OmaStack automaatit) {
+<span class="fc" id="L65">        Automaatti toinen = (Automaatti) automaatit.pop();</span>
+<span class="fc" id="L66">        Automaatti ensimmainen = (Automaatti) automaatit.pop();</span>
+<span class="fc" id="L67">        automaatit.push(luoTaiautomaatti(toinen, ensimmainen));</span>
+<span class="fc" id="L68">    }</span>
+    private static void kasitteleLiitos(OmaStack automaatit) {
+<span class="fc" id="L70">        Automaatti toinen = (Automaatti) automaatit.pop();</span>
+<span class="fc" id="L71">        Automaatti ensimmainen = (Automaatti) automaatit.pop();</span>
+<span class="fc" id="L72">        automaatit.push(luoLiitosautomaatti(ensimmainen, toinen));</span>
 <span class="fc" id="L73">    }</span>
-    private static void kasittelePlus(Stack automaatit) {
+    private static void kasitteleTahti(OmaStack automaatit) {
 <span class="fc" id="L75">        Automaatti toistuva = (Automaatti) automaatit.pop();</span>
-<span class="fc" id="L76">        automaatit.push(luoPlusautomaatti(toistuva));</span>
+<span class="fc" id="L76">        automaatit.push(luoTahtiautomaatti(toistuva));</span>
 <span class="fc" id="L77">    }</span>
+    private static void kasittelePlus(OmaStack automaatit) {
+<span class="fc" id="L79">        Automaatti toistuva = (Automaatti) automaatit.pop();</span>
+<span class="fc" id="L80">        automaatit.push(luoPlusautomaatti(toistuva));</span>
+<span class="fc" id="L81">    }</span>
     
     /**
      * Luo kaksitilaisen automaatin, joka hyväksyy ainoastaan yhden
@@ -84,11 +88,11 @@ public class Automaatti {
      */
     public static Automaatti luoKirjainautomaatti (Character hyvaksyttySyote) {
        
-<span class="fc" id="L87">        Tila automaatinAlkutila = new Tila();</span>
-<span class="fc" id="L88">        Tila automaatinLopputila = new Tila();</span>
+<span class="fc" id="L91">        Tila automaatinAlkutila = new Tila();</span>
+<span class="fc" id="L92">        Tila automaatinLopputila = new Tila();</span>
         
-<span class="fc" id="L90">        automaatinAlkutila.lisaaSiirtofunktio(new Siirtofunktio(automaatinLopputila, hyvaksyttySyote));</span>
-<span class="fc" id="L91">        return new Automaatti(automaatinAlkutila, automaatinLopputila);</span>
+<span class="fc" id="L94">        automaatinAlkutila.lisaaSiirtofunktio(new Siirtofunktio(automaatinLopputila, hyvaksyttySyote));</span>
+<span class="fc" id="L95">        return new Automaatti(automaatinAlkutila, automaatinLopputila);</span>
     }
     
     /**
@@ -99,11 +103,11 @@ public class Automaatti {
      * @return Automaatti-olio.
      */
     public static Automaatti luoLiitosautomaatti(Automaatti edeltava, Automaatti jalkimmainen) {
-<span class="fc" id="L102">        Tila automaatinAlkutila = edeltava.getAlkutila();</span>
-<span class="fc" id="L103">        Tila automaatinLopputila = jalkimmainen.getLopputila();</span>
-<span class="fc" id="L104">        edeltava.getLopputila().lisaaSiirtofunktio(new Siirtofunktio(jalkimmainen.getAlkutila(), null));</span>
+<span class="fc" id="L106">        Tila automaatinAlkutila = edeltava.getAlkutila();</span>
+<span class="fc" id="L107">        Tila automaatinLopputila = jalkimmainen.getLopputila();</span>
+<span class="fc" id="L108">        edeltava.getLopputila().lisaaSiirtofunktio(new Siirtofunktio(jalkimmainen.getAlkutila(), null));</span>
         
-<span class="fc" id="L106">        return new Automaatti(automaatinAlkutila, automaatinLopputila);</span>
+<span class="fc" id="L110">        return new Automaatti(automaatinAlkutila, automaatinLopputila);</span>
     }
     
     /**
@@ -116,15 +120,15 @@ public class Automaatti {
      * @return Automaatti-olio.
      */
     public static Automaatti luoTaiautomaatti(Automaatti joko, Automaatti tai) {
-<span class="fc" id="L119">        Tila automaatinAlkutila = new Tila();</span>
-<span class="fc" id="L120">        Tila automaatinLopputila = new Tila();</span>
+<span class="fc" id="L123">        Tila automaatinAlkutila = new Tila();</span>
+<span class="fc" id="L124">        Tila automaatinLopputila = new Tila();</span>
 
-<span class="fc" id="L122">        automaatinAlkutila.lisaaSiirtofunktio(new Siirtofunktio(joko.getAlkutila(), null));</span>
-<span class="fc" id="L123">        automaatinAlkutila.lisaaSiirtofunktio(new Siirtofunktio(tai.getAlkutila(), null));</span>
-<span class="fc" id="L124">        joko.getLopputila().lisaaSiirtofunktio(new Siirtofunktio(automaatinLopputila, null));</span>
-<span class="fc" id="L125">        tai.getLopputila().lisaaSiirtofunktio(new Siirtofunktio(automaatinLopputila, null));</span>
+<span class="fc" id="L126">        automaatinAlkutila.lisaaSiirtofunktio(new Siirtofunktio(joko.getAlkutila(), null));</span>
+<span class="fc" id="L127">        automaatinAlkutila.lisaaSiirtofunktio(new Siirtofunktio(tai.getAlkutila(), null));</span>
+<span class="fc" id="L128">        joko.getLopputila().lisaaSiirtofunktio(new Siirtofunktio(automaatinLopputila, null));</span>
+<span class="fc" id="L129">        tai.getLopputila().lisaaSiirtofunktio(new Siirtofunktio(automaatinLopputila, null));</span>
 
-<span class="fc" id="L127">        return new Automaatti(automaatinAlkutila, automaatinLopputila);</span>
+<span class="fc" id="L131">        return new Automaatti(automaatinAlkutila, automaatinLopputila);</span>
     }
     
     /**
@@ -135,16 +139,16 @@ public class Automaatti {
      * @return Automaatti-olio.
      */
     public static Automaatti luoTahtiautomaatti(Automaatti toistuva) {
-<span class="fc" id="L138">        Tila automaatinAlkutila = new Tila();</span>
-<span class="fc" id="L139">        Tila automaatinLopputila = new Tila();</span>
+<span class="fc" id="L142">        Tila automaatinAlkutila = new Tila();</span>
+<span class="fc" id="L143">        Tila automaatinLopputila = new Tila();</span>
         
-<span class="fc" id="L141">        automaatinAlkutila.lisaaSiirtofunktio(new Siirtofunktio(toistuva.alkutila, null));</span>
-<span class="fc" id="L142">        automaatinAlkutila.lisaaSiirtofunktio(new Siirtofunktio(automaatinLopputila, null));</span>
-<span class="fc" id="L143">        toistuva.getLopputila().lisaaSiirtofunktio(new Siirtofunktio(toistuva.getAlkutila(), null));</span>
-<span class="fc" id="L144">        toistuva.getLopputila().lisaaSiirtofunktio(new Siirtofunktio(automaatinLopputila, null));</span>
+<span class="fc" id="L145">        automaatinAlkutila.lisaaSiirtofunktio(new Siirtofunktio(toistuva.alkutila, null));</span>
+<span class="fc" id="L146">        automaatinAlkutila.lisaaSiirtofunktio(new Siirtofunktio(automaatinLopputila, null));</span>
+<span class="fc" id="L147">        toistuva.getLopputila().lisaaSiirtofunktio(new Siirtofunktio(toistuva.getAlkutila(), null));</span>
+<span class="fc" id="L148">        toistuva.getLopputila().lisaaSiirtofunktio(new Siirtofunktio(automaatinLopputila, null));</span>
         
         
-<span class="fc" id="L147">        return new Automaatti(automaatinAlkutila, automaatinLopputila);</span>
+<span class="fc" id="L151">        return new Automaatti(automaatinAlkutila, automaatinLopputila);</span>
     }
     
     /**
@@ -157,7 +161,7 @@ public class Automaatti {
      * @return Automaatti-olio.
      */
     public static Automaatti luoPlusautomaatti(Automaatti toistuva) {
-<span class="fc" id="L160">        return luoLiitosautomaatti(toistuva, luoTahtiautomaatti(toistuva));</span>
+<span class="fc" id="L164">        return luoLiitosautomaatti(toistuva, luoTahtiautomaatti(toistuva));</span>
     }
     
     /**
@@ -165,62 +169,68 @@ public class Automaatti {
      * @param syote Syötejono.
      */
     public boolean annaSyote(String syote) {
-<span class="fc" id="L168">        List&lt;Tila&gt; nykyiset = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L169">        List&lt;Tila&gt; seuraavat = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L170">        lisaaSeuraaviin(alkutila, seuraavat);</span>
-<span class="fc" id="L171">        nykyiset = seuraavat;</span>
-<span class="fc" id="L172">        seuraavat = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L172">        OmaArrayList&lt;Tila&gt; nykyiset = new OmaArrayList&lt;&gt;();</span>
+<span class="fc" id="L173">        OmaArrayList&lt;Tila&gt; seuraavat = new OmaArrayList&lt;&gt;();</span>
+<span class="fc" id="L174">        lisaaSeuraaviin(alkutila, seuraavat);</span>
+<span class="fc" id="L175">        nykyiset = seuraavat;</span>
+<span class="fc" id="L176">        seuraavat = new OmaArrayList&lt;&gt;();</span>
         
-<span class="fc bfc" id="L174" title="All 2 branches covered.">        for (int i = 0; i &lt; syote.length(); i++) {</span>
-<span class="fc" id="L175">            char kirjain = syote.charAt(i);</span>
-<span class="fc" id="L176">            kayLapiSiirtofunktiot(nykyiset, seuraavat, kirjain);</span>
-<span class="fc" id="L177">            nykyiset = seuraavat;</span>
-<span class="fc" id="L178">            seuraavat = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L178" title="All 2 branches covered.">        for (int i = 0; i &lt; syote.length(); i++) {</span>
+<span class="fc" id="L179">            char kirjain = syote.charAt(i);</span>
+<span class="fc" id="L180">            kayLapiSiirtofunktiot(nykyiset, seuraavat, kirjain);</span>
+<span class="fc" id="L181">            nykyiset = seuraavat;</span>
+<span class="fc" id="L182">            seuraavat = new OmaArrayList&lt;&gt;();</span>
         }
-<span class="fc" id="L180">        return nykyiset.contains(lopputila);</span>
+<span class="fc" id="L184">        return nykyiset.contains(lopputila);</span>
     }
     
-    private void kayLapiSiirtofunktiot(List&lt;Tila&gt; nykyiset, List&lt;Tila&gt; seuraavat, char kirjain) {
-<span class="fc bfc" id="L184" title="All 2 branches covered.">        for(Tila t : nykyiset) {</span>
-<span class="fc bfc" id="L185" title="All 2 branches covered.">            for(Siirtofunktio s : t.getSiirtofunktiot()) {</span>
-<span class="fc bfc" id="L186" title="All 2 branches covered.">                if(s.getHyvaksyttySyote() == null) {</span>
-<span class="fc" id="L187">                    continue;</span>
-                }
-<span class="fc bfc" id="L189" title="All 2 branches covered.">                if(s.getHyvaksyttySyote() == kirjain) {</span>
-<span class="fc" id="L190">                    lisaaSeuraaviin(s.getLopputila(), seuraavat);</span>
-                }
-<span class="fc" id="L192">            }</span>
-<span class="fc" id="L193">        }</span>
-<span class="fc" id="L194">    }</span>
-    
-    public void lisaaSeuraaviin(Tila lisattava, List&lt;Tila&gt; seuraavat) {
-<span class="fc bfc" id="L197" title="All 2 branches covered.">        if(seuraavat.contains(lisattava)) {</span>
-<span class="fc" id="L198">            return;</span>
-        }
-<span class="fc" id="L200">        seuraavat.add(lisattava);</span>
-<span class="fc bfc" id="L201" title="All 2 branches covered.">        for(Siirtofunktio s : lisattava.getSiirtofunktiot()) {</span>
-<span class="fc bfc" id="L202" title="All 2 branches covered.">            if(s.getHyvaksyttySyote() == null) {</span>
-<span class="fc" id="L203">                lisaaSeuraaviin(s.getLopputila(), seuraavat);</span>
-            }
-<span class="fc" id="L205">        }</span>
+    private void kayLapiSiirtofunktiot(OmaArrayList&lt;Tila&gt; nykyiset, OmaArrayList&lt;Tila&gt; seuraavat, char kirjain) {
         
-<span class="fc" id="L207">    }</span>
+<span class="fc bfc" id="L189" title="All 2 branches covered.">        for (int i = 0; i &lt; nykyiset.size(); i++) {</span>
+<span class="fc" id="L190">            Tila t = nykyiset.get(i);</span>
+            
+<span class="fc bfc" id="L192" title="All 2 branches covered.">            for (int j = 0; j &lt; t.getSiirtofunktiot().size(); j++) {</span>
+<span class="fc" id="L193">                Siirtofunktio s = t.getSiirtofunktiot().get(j);</span>
+<span class="fc bfc" id="L194" title="All 2 branches covered.">                if(s.getHyvaksyttySyote() == null) {</span>
+<span class="fc" id="L195">                    continue;</span>
+                }
+<span class="fc bfc" id="L197" title="All 2 branches covered.">                if(s.getHyvaksyttySyote() == kirjain) {</span>
+<span class="fc" id="L198">                    lisaaSeuraaviin(s.getLopputila(), seuraavat);</span>
+                }
+            }
+        }
+<span class="fc" id="L202">    }</span>
+    
+    public void lisaaSeuraaviin(Tila lisattava, OmaArrayList&lt;Tila&gt; seuraavat) {
+<span class="fc bfc" id="L205" title="All 2 branches covered.">        if(seuraavat.contains(lisattava)) {</span>
+<span class="fc" id="L206">            return;</span>
+        }
+<span class="fc" id="L208">        seuraavat.add(lisattava);</span>
+        
+<span class="fc bfc" id="L210" title="All 2 branches covered.">        for (int i = 0; i &lt; lisattava.getSiirtofunktiot().size(); i++) {</span>
+<span class="fc" id="L211">            Siirtofunktio s = lisattava.getSiirtofunktiot().get(i);</span>
+<span class="fc bfc" id="L212" title="All 2 branches covered.">            if(s.getHyvaksyttySyote() == null) {</span>
+<span class="fc" id="L213">                lisaaSeuraaviin(s.getLopputila(), seuraavat);</span>
+            }
+        }
+        
+<span class="fc" id="L217">    }</span>
     
     public Tila getAlkutila() {
-<span class="fc" id="L210">        return alkutila;</span>
+<span class="fc" id="L220">        return alkutila;</span>
     }
 
     public Tila getLopputila() {
-<span class="fc" id="L214">        return lopputila;</span>
+<span class="fc" id="L224">        return lopputila;</span>
     }
     
      public void setAlkutila(Tila alkutila) {
-<span class="nc" id="L218">        this.alkutila = alkutila;</span>
-<span class="nc" id="L219">    }</span>
+<span class="nc" id="L228">        this.alkutila = alkutila;</span>
+<span class="nc" id="L229">    }</span>
 
     public void setLopputila(Tila lopputila) {
-<span class="nc" id="L222">        this.lopputila = lopputila;</span>
-<span class="nc" id="L223">    }</span>
+<span class="nc" id="L232">        this.lopputila = lopputila;</span>
+<span class="nc" id="L233">    }</span>
     
    
     

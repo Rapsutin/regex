@@ -48,4 +48,20 @@ public class OmaStackTest {
             assertTrue(pino.pop() == i);
         }
     }
+    
+    @Test
+    public void isEmpty_toimii() {
+        assertTrue(pino.isEmpty());
+        pino.push(1);
+        assertTrue(!pino.isEmpty());
+        pino.pop();
+        assertTrue(pino.isEmpty());
+    }
+    
+    @Test
+    public void peek_toimii() {
+        pino.push(1);
+        assertTrue(pino.peek() == 1);
+        assertTrue(!pino.isEmpty());
+    }
 }

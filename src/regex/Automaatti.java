@@ -4,9 +4,13 @@
  */
 package regex;
 
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
+import tietorakenteet.OmaArrayList;
+
+import tietorakenteet.OmaStack;
+
 
 /**
  * Epädeterministinen äärellinen automaatti.
@@ -29,7 +33,7 @@ public class Automaatti {
      */
     public static Automaatti luoAutomaattiRegexista(String infix) {
         String postfix = KaanteinenNotaatio.muunnaKaanteiseksi(infix);
-        Stack automaatit = new Stack();
+        OmaStack automaatit = new OmaStack();
         for (int i = 0; i < postfix.length(); i++) {
             kasitteleMerkki(postfix.charAt(i), automaatit);
         }
@@ -43,7 +47,7 @@ public class Automaatti {
      * @param merkki Käsiteltävä merkki.
      * @param automaatit Pinossa olevat automaatit.
      */
-    private static void kasitteleMerkki(char merkki, Stack automaatit) {
+    private static void kasitteleMerkki(char merkki, OmaStack automaatit) {
         if(Character.isLetter(merkki)) {
             automaatit.push(luoKirjainautomaatti(merkki));
         } else if(merkki == '|') {
@@ -57,21 +61,21 @@ public class Automaatti {
         }
     }
     
-    private static void kasitteleTai(Stack automaatit) {
+    private static void kasitteleTai(OmaStack automaatit) {
         Automaatti toinen = (Automaatti) automaatit.pop();
         Automaatti ensimmainen = (Automaatti) automaatit.pop();
         automaatit.push(luoTaiautomaatti(toinen, ensimmainen));
     }
-    private static void kasitteleLiitos(Stack automaatit) {
+    private static void kasitteleLiitos(OmaStack automaatit) {
         Automaatti toinen = (Automaatti) automaatit.pop();
         Automaatti ensimmainen = (Automaatti) automaatit.pop();
         automaatit.push(luoLiitosautomaatti(ensimmainen, toinen));
     }
-    private static void kasitteleTahti(Stack automaatit) {
+    private static void kasitteleTahti(OmaStack automaatit) {
         Automaatti toistuva = (Automaatti) automaatit.pop();
         automaatit.push(luoTahtiautomaatti(toistuva));
     }
-    private static void kasittelePlus(Stack automaatit) {
+    private static void kasittelePlus(OmaStack automaatit) {
         Automaatti toistuva = (Automaatti) automaatit.pop();
         automaatit.push(luoPlusautomaatti(toistuva));
     }
@@ -165,24 +169,28 @@ public class Automaatti {
      * @param syote Syötejono.
      */
     public boolean annaSyote(String syote) {
-        List<Tila> nykyiset = new ArrayList<>();
-        List<Tila> seuraavat = new ArrayList<>();
+        OmaArrayList<Tila> nykyiset = new OmaArrayList<>();
+        OmaArrayList<Tila> seuraavat = new OmaArrayList<>();
         lisaaSeuraaviin(alkutila, seuraavat);
         nykyiset = seuraavat;
-        seuraavat = new ArrayList<>();
+        seuraavat = new OmaArrayList<>();
         
         for (int i = 0; i < syote.length(); i++) {
             char kirjain = syote.charAt(i);
             kayLapiSiirtofunktiot(nykyiset, seuraavat, kirjain);
             nykyiset = seuraavat;
-            seuraavat = new ArrayList<>();
+            seuraavat = new OmaArrayList<>();
         }
         return nykyiset.contains(lopputila);
     }
     
-    private void kayLapiSiirtofunktiot(List<Tila> nykyiset, List<Tila> seuraavat, char kirjain) {
-        for(Tila t : nykyiset) {
-            for(Siirtofunktio s : t.getSiirtofunktiot()) {
+    private void kayLapiSiirtofunktiot(OmaArrayList<Tila> nykyiset, OmaArrayList<Tila> seuraavat, char kirjain) {
+        
+        for (int i = 0; i < nykyiset.size(); i++) {
+            Tila t = nykyiset.get(i);
+            
+            for (int j = 0; j < t.getSiirtofunktiot().size(); j++) {
+                Siirtofunktio s = t.getSiirtofunktiot().get(j);
                 if(s.getHyvaksyttySyote() == null) {
                     continue;
                 }
@@ -193,12 +201,14 @@ public class Automaatti {
         }
     }
     
-    public void lisaaSeuraaviin(Tila lisattava, List<Tila> seuraavat) {
+    public void lisaaSeuraaviin(Tila lisattava, OmaArrayList<Tila> seuraavat) {
         if(seuraavat.contains(lisattava)) {
             return;
         }
         seuraavat.add(lisattava);
-        for(Siirtofunktio s : lisattava.getSiirtofunktiot()) {
+        
+        for (int i = 0; i < lisattava.getSiirtofunktiot().size(); i++) {
+            Siirtofunktio s = lisattava.getSiirtofunktiot().get(i);
             if(s.getHyvaksyttySyote() == null) {
                 lisaaSeuraaviin(s.getLopputila(), seuraavat);
             }

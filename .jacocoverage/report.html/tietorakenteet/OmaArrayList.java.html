@@ -4,21 +4,23 @@
  */
 package tietorakenteet;
 
+import java.util.Iterator;
+
 /**
  *
  * @author Juho
  */
-public class OmaArrayList &lt;E&gt;{
+public class OmaArrayList &lt;E&gt; {
     
     private int seuraavaIndeksi;
     private Object[] taulukko;
   
     
   
-<span class="fc" id="L18">    public OmaArrayList() {</span>
-<span class="fc" id="L19">        seuraavaIndeksi = 0;</span>
-<span class="fc" id="L20">        taulukko = new Object[10];</span>
-<span class="fc" id="L21">    }</span>
+<span class="fc" id="L20">    public OmaArrayList() {</span>
+<span class="fc" id="L21">        seuraavaIndeksi = 0;</span>
+<span class="fc" id="L22">        taulukko = new Object[10];</span>
+<span class="fc" id="L23">    }</span>
     
     /**
      * Lisää taulukon loppuun annetun
@@ -26,28 +28,37 @@ public class OmaArrayList &lt;E&gt;{
      * @param lisattava Lisättava alkio.
      */
     public void add(E lisattava) {
-<span class="fc" id="L29">        muutaTaulukonKokoaTarvittaessa();</span>
-<span class="fc" id="L30">        taulukko[seuraavaIndeksi] = lisattava;</span>
-<span class="fc" id="L31">        seuraavaIndeksi++;</span>
-<span class="fc" id="L32">    }</span>
+<span class="fc" id="L31">        muutaTaulukonKokoaTarvittaessa();</span>
+<span class="fc" id="L32">        taulukko[seuraavaIndeksi] = lisattava;</span>
+<span class="fc" id="L33">        seuraavaIndeksi++;</span>
+<span class="fc" id="L34">    }</span>
     
     /**
      * Poistaa alkion annetusta
      * indeksistä.
      * @param indeksi 
      */
-    public void poista(int indeksi) {
-<span class="fc" id="L40">        taulukko[indeksi] = null;</span>
-<span class="fc bfc" id="L41" title="All 2 branches covered.">        for (int i = indeksi + 1; i &lt; seuraavaIndeksi; i++) {</span>
-<span class="fc" id="L42">            taulukko[i-1] = taulukko[i];</span>
+    public void remove(int indeksi) {
+<span class="fc" id="L42">        taulukko[indeksi] = null;</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">        for (int i = indeksi + 1; i &lt; seuraavaIndeksi; i++) {</span>
+<span class="fc" id="L44">            taulukko[i-1] = taulukko[i];</span>
         }
-<span class="fc" id="L44">        taulukko[seuraavaIndeksi - 1] = null;</span>
-<span class="fc" id="L45">        seuraavaIndeksi--;</span>
-<span class="fc" id="L46">    }</span>
+<span class="fc" id="L46">        taulukko[seuraavaIndeksi - 1] = null;</span>
+<span class="fc" id="L47">        seuraavaIndeksi--;</span>
+<span class="fc" id="L48">    }</span>
     
-    public void poistaViimeinen() {
-<span class="fc" id="L49">        poista(seuraavaIndeksi - 1);</span>
-<span class="fc" id="L50">    }</span>
+    public boolean contains(E elementti) {
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        for (int i = 0; i &lt; size(); i++) {</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">            if(elementti.equals(get(i))) {</span>
+<span class="fc" id="L53">                return true;</span>
+            }
+        }
+<span class="fc" id="L56">        return false;</span>
+    }
+    
+    public void removeLast() {
+<span class="fc" id="L60">        remove(seuraavaIndeksi - 1);</span>
+<span class="fc" id="L61">    }</span>
     
     /**
      * Palauttaa listan alkion,
@@ -56,14 +67,18 @@ public class OmaArrayList &lt;E&gt;{
      * @return Listan alkio.
      */
     public E get(int indeksi) {
-<span class="pc bpc" id="L59" title="2 of 4 branches missed.">        if(indeksi &gt;= seuraavaIndeksi || indeksi &lt; 0) {</span>
-<span class="nc" id="L60">            throw new IndexOutOfBoundsException();</span>
+<span class="pc bpc" id="L70" title="2 of 4 branches missed.">        if(indeksi &gt;= seuraavaIndeksi || indeksi &lt; 0) {</span>
+<span class="nc" id="L71">            throw new IndexOutOfBoundsException();</span>
         }
-<span class="fc" id="L62">        return (E) taulukko[indeksi];</span>
+<span class="fc" id="L73">        return (E) taulukko[indeksi];</span>
     }
     
-    public E getViimeinen() {
-<span class="fc" id="L66">        return get(seuraavaIndeksi - 1);</span>
+    public E getLast() {
+<span class="fc" id="L77">        return get(seuraavaIndeksi - 1);</span>
+    }
+    
+    public E getFirst() {
+<span class="fc" id="L81">        return get(0);</span>
     }
     
     /**
@@ -71,27 +86,29 @@ public class OmaArrayList &lt;E&gt;{
      * se tulee täyteen.
      */
     private void muutaTaulukonKokoaTarvittaessa() {
-<span class="fc bfc" id="L74" title="All 2 branches covered.">        if(getAlkioidenMaara() == taulukko.length) {</span>
-<span class="fc" id="L75">            Object[] uusiTaulukko = new Object[taulukko.length * 2];</span>
-<span class="fc" id="L76">            kopioiAlkiotUuteenTaulukkoon(taulukko, uusiTaulukko);</span>
-<span class="fc" id="L77">            taulukko = uusiTaulukko;</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">        if(size() == taulukko.length) {</span>
+<span class="fc" id="L90">            Object[] uusiTaulukko = new Object[taulukko.length * 2];</span>
+<span class="fc" id="L91">            kopioiAlkiotUuteenTaulukkoon(taulukko, uusiTaulukko);</span>
+<span class="fc" id="L92">            taulukko = uusiTaulukko;</span>
         }
-<span class="fc" id="L79">    }</span>
+<span class="fc" id="L94">    }</span>
     
     /*Tähän on olemassa Javan omakin metodi, mutta pyrin tekemään
      * mahdollisimman paljon itse.
      */
     private void kopioiAlkiotUuteenTaulukkoon(Object[] kopioitava, Object[] uusi) {
-<span class="fc bfc" id="L85" title="All 2 branches covered.">        for (int i = 0; i &lt; kopioitava.length; i++) {</span>
-<span class="fc" id="L86">            uusi[i] = kopioitava[i];</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">        for (int i = 0; i &lt; kopioitava.length; i++) {</span>
+<span class="fc" id="L101">            uusi[i] = kopioitava[i];</span>
         }
-<span class="fc" id="L88">    }</span>
+<span class="fc" id="L103">    }</span>
     
     
     
-    public int getAlkioidenMaara() {
-<span class="fc" id="L93">        return seuraavaIndeksi;</span>
+    public int size() {
+<span class="fc" id="L108">        return seuraavaIndeksi;</span>
     }
+
+    
     
     
     

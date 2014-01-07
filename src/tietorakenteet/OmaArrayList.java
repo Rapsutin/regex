@@ -4,11 +4,13 @@
  */
 package tietorakenteet;
 
+import java.util.Iterator;
+
 /**
  *
  * @author Juho
  */
-public class OmaArrayList <E>{
+public class OmaArrayList <E> {
     
     private int seuraavaIndeksi;
     private Object[] taulukko;
@@ -36,7 +38,7 @@ public class OmaArrayList <E>{
      * indeksistä.
      * @param indeksi 
      */
-    public void poista(int indeksi) {
+    public void remove(int indeksi) {
         taulukko[indeksi] = null;
         for (int i = indeksi + 1; i < seuraavaIndeksi; i++) {
             taulukko[i-1] = taulukko[i];
@@ -45,8 +47,17 @@ public class OmaArrayList <E>{
         seuraavaIndeksi--;
     }
     
-    public void poistaViimeinen() {
-        poista(seuraavaIndeksi - 1);
+    public boolean contains(E elementti) {
+        for (int i = 0; i < size(); i++) {
+            if(elementti.equals(get(i))) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public void removeLast() {
+        remove(seuraavaIndeksi - 1);
     }
     
     /**
@@ -62,8 +73,12 @@ public class OmaArrayList <E>{
         return (E) taulukko[indeksi];
     }
     
-    public E getViimeinen() {
+    public E getLast() {
         return get(seuraavaIndeksi - 1);
+    }
+    
+    public E getFirst() {
+        return get(0);
     }
     
     /**
@@ -71,7 +86,7 @@ public class OmaArrayList <E>{
      * se tulee täyteen.
      */
     private void muutaTaulukonKokoaTarvittaessa() {
-        if(getAlkioidenMaara() == taulukko.length) {
+        if(size() == taulukko.length) {
             Object[] uusiTaulukko = new Object[taulukko.length * 2];
             kopioiAlkiotUuteenTaulukkoon(taulukko, uusiTaulukko);
             taulukko = uusiTaulukko;
@@ -89,9 +104,11 @@ public class OmaArrayList <E>{
     
     
     
-    public int getAlkioidenMaara() {
+    public int size() {
         return seuraavaIndeksi;
     }
+
+    
     
     
     

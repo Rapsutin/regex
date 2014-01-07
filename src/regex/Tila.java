@@ -6,6 +6,7 @@ package regex;
 
 import java.util.ArrayList;
 import java.util.List;
+import tietorakenteet.OmaArrayList;
 
 /**
  *
@@ -13,17 +14,17 @@ import java.util.List;
  */
 public class Tila {
     
-    private List<Siirtofunktio> siirtofunktiot;
+    private OmaArrayList<Siirtofunktio> siirtofunktiot;
     
     public Tila() {
-        siirtofunktiot = new ArrayList<>();
+        siirtofunktiot = new OmaArrayList<>();
     }
     
     public void lisaaSiirtofunktio(Siirtofunktio siirtofunktio) {
         siirtofunktiot.add(siirtofunktio);
     }
     
-    public List<Siirtofunktio> getSiirtofunktiot() {
+    public OmaArrayList<Siirtofunktio> getSiirtofunktiot() {
         return siirtofunktiot;
     }
 

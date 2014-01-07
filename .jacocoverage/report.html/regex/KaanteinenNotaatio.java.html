@@ -4,7 +4,7 @@
  */
 package regex;
 
-import java.util.Stack;
+import tietorakenteet.OmaStack;
 
 /**
  *Luokan avulla voidaan muuttaa tavallisessa muodossa olevia
@@ -23,7 +23,7 @@ public final class KaanteinenNotaatio {
      * @return Käänteisessä muodossa oleva säännöllinen lauseke.
      */
     public static String muunnaKaanteiseksi(String infix) {
-<span class="fc" id="L26">        Stack pino = new Stack();</span>
+<span class="fc" id="L26">        OmaStack pino = new OmaStack();</span>
 <span class="fc" id="L27">        String infixLiitoksilla = merkitseLiitokset(infix);</span>
 <span class="fc" id="L28">        StringBuilder output = new StringBuilder();</span>
         
@@ -32,7 +32,7 @@ public final class KaanteinenNotaatio {
 <span class="fc" id="L32">            kasitteleMerkki(kasiteltavaMerkki, output, pino);</span>
         }
         
-<span class="fc bfc" id="L35" title="All 2 branches covered.">        while(!pino.empty()) {</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        while(!pino.isEmpty()) {</span>
 <span class="fc" id="L36">            output.append(pino.pop());</span>
         }
 <span class="fc" id="L38">        return output.toString();</span>
@@ -41,7 +41,7 @@ public final class KaanteinenNotaatio {
     /* Käsittely perustuu shunting-yard -algoritmiin.
      * http://en.wikipedia.org/wiki/Shunting-yard_algorithm
      */
-    private static void kasitteleMerkki(char kasiteltavaMerkki, StringBuilder output, Stack pino) {
+    private static void kasitteleMerkki(char kasiteltavaMerkki, StringBuilder output, OmaStack pino) {
         
             
 <span class="fc bfc" id="L47" title="All 2 branches covered.">        if(Operaattori.valueOf(kasiteltavaMerkki) != null) {</span>
@@ -55,7 +55,7 @@ public final class KaanteinenNotaatio {
         }
 <span class="fc" id="L56">    }</span>
     
-    private static void kasitteleOperaattori(char kasiteltavaMerkki, Stack pino, StringBuilder output) {
+    private static void kasitteleOperaattori(char kasiteltavaMerkki, OmaStack pino, StringBuilder output) {
 <span class="fc" id="L59">        Operaattori kasiteltavaOperaattori = Operaattori.valueOf(kasiteltavaMerkki);</span>
 <span class="fc bfc" id="L60" title="All 2 branches covered.">        while(!pino.isEmpty()) {</span>
             
@@ -74,7 +74,7 @@ public final class KaanteinenNotaatio {
 <span class="fc" id="L74">        pino.push(Operaattori.valueOf(kasiteltavaMerkki));</span>
 <span class="fc" id="L75">    }</span>
 
-    private static void kasitteleOikeaSulku(Stack pino, StringBuilder output) {
+    private static void kasitteleOikeaSulku(OmaStack pino, StringBuilder output) {
 <span class="fc bfc" id="L78" title="All 2 branches covered.">        while(pino.peek() != '(') {</span>
 <span class="fc" id="L79">            output.append(pino.pop());</span>
         }

@@ -22,9 +22,21 @@ public class OmaStack <E> {
     }
     
     public E pop() {
-        E popattu = pino.getViimeinen();
-        pino.poistaViimeinen();
+        E popattu = pino.getLast();
+        pino.removeLast();
         return popattu;
+    }
+    
+    public boolean isEmpty() {
+        return pino.size() == 0;
+    }
+    
+    public E firstElement() {
+        return pino.getFirst();
+    }
+    
+    public E peek() {
+        return pino.getLast();
     }
     
     
