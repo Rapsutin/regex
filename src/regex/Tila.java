@@ -4,8 +4,7 @@
  */
 package regex;
 
-import java.util.ArrayList;
-import java.util.List;
+
 import tietorakenteet.OmaArrayList;
 
 /**
