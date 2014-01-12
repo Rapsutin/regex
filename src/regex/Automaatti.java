@@ -5,7 +5,6 @@
 package regex;
 
 import tietorakenteet.OmaArrayList;
-
 import tietorakenteet.OmaStack;
 
 
@@ -167,6 +166,14 @@ public class Automaatti {
         return luoLiitosautomaatti(toistuva, luoTahtiautomaatti(toistuva));
     }
     
+    /**
+     * Luo automaatin, joka 
+     * hyväksyy annetun syötteen,
+     * jonka alkuperäinen automaatti hyväksyisi
+     * 0-1 kertaa.
+     * @param automaatti Alkuperäinen automaatti.
+     * @return Automaatti-olio
+     */
     public static Automaatti luoKysymysmerkkiautomaatti(Automaatti automaatti) {
         Tila alkutila = automaatti.getAlkutila();
         Tila lopputila = automaatti.getLopputila();
