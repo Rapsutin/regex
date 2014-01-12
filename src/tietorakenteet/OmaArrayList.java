@@ -4,10 +4,10 @@
  */
 package tietorakenteet;
 
-import java.util.Iterator;
+
 
 /**
- *
+ *Vastaa osittain Javan ArrayList-luokkaa.
  * @author Juho
  */
 public class OmaArrayList <E> {
@@ -16,7 +16,10 @@ public class OmaArrayList <E> {
     private Object[] taulukko;
   
     
-  
+    /**
+     * Lista, joka kasvattaa itseään,
+     * kun siihen lisätään uusia alkioita.
+     */
     public OmaArrayList() {
         seuraavaIndeksi = 0;
         taulukko = new Object[10];
@@ -47,15 +50,25 @@ public class OmaArrayList <E> {
         seuraavaIndeksi--;
     }
     
-    public boolean contains(E elementti) {
+    /**
+     * Kertoo onko annettu
+     * olio listassa.
+     * @param object
+     * @return True, jos olio on listassa, muuten false.
+     */
+    public boolean contains(E object) {
         for (int i = 0; i < size(); i++) {
-            if(elementti.equals(get(i))) {
+            if(object.equals(get(i))) {
                 return true;
             }
         }
         return false;
     }
     
+    /**
+     * Poistaa listasta sen
+     * viimeisen olion.
+     */
     public void removeLast() {
         remove(seuraavaIndeksi - 1);
     }
@@ -73,10 +86,17 @@ public class OmaArrayList <E> {
         return (E) taulukko[indeksi];
     }
     
+    /**
+     * Palauttaa listan viimeisen olion.
+     * @return Listan viimeinen olio.
+     */
     public E getLast() {
         return get(seuraavaIndeksi - 1);
     }
-    
+    /**
+     * Palauttaa listan ensimmäisen olion.
+     * @return Listan ensimmäinen olio.
+     */
     public E getFirst() {
         return get(0);
     }
@@ -103,7 +123,10 @@ public class OmaArrayList <E> {
     }
     
     
-    
+    /**
+     * Palauttaa listan alkioiden määrän.
+     * @return Listan alkioiden määrä.
+     */
     public int size() {
         return seuraavaIndeksi;
     }

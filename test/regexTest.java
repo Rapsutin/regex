@@ -141,6 +141,17 @@ public class regexTest {
     }
     
     @Test
+    public void testaa_kysymysmerkkilausekkeita() {
+        testaaja("a?", "a");
+        testaaja("a?", "ab");
+        testaaja("a?", "");
+        testaaja("(a|b)?c", "ac");
+        testaaja("(a|b)?c", "a");
+        testaaja("(a|b)?c", "c");
+        testaaja("(a|b)?c", "abc");
+    }
+    
+    @Test
     public void testaa_monimutkaisia_saannollisia_lausekkeita() {
         testaaja("(a|(ba)*)*", "aababa");
         testaaja("(a|(ba)*)*", "aabba");
@@ -157,6 +168,8 @@ public class regexTest {
         testaaja("((ab(ab)+))*", "abab");
         testaaja("((ab(ab)+))*", "ababab");
         testaaja("((ab(ab)+))*", "abababc");
+        testaaja("((abc)?|k*)+abc?", "abcabckkkkkkabc");
+        testaaja("((abc)?|k*)+abc?", "abcabckkkkkk");
     }
     
     @Test

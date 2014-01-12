@@ -25,16 +25,16 @@ public class Automaatti {
     /**
      * Luo automaatin annetun tavallisessa muodossa
      * olevan säännöllisen lausekkeen perusteella.
-     * @param infix Tavallisessa muodossa oleva säännöllinen lauseke.
+     * @param regex Tavallisessa muodossa oleva säännöllinen lauseke.
      * @return 
      */
-    public static Automaatti luoAutomaattiRegexista(String infix) {
-        String postfix = KaanteinenNotaatio.muunnaKaanteiseksi(infix);
+    public static Automaatti luoAutomaattiRegexista(String regex) {
+        String postfix = KaanteinenNotaatio.muunnaKaanteiseksi(regex);
         OmaStack automaatit = new OmaStack();
         for (int i = 0; i < postfix.length(); i++) {
             kasitteleMerkki(postfix.charAt(i), automaatit);
         }
-        return (Automaatti) automaatit.firstElement();
+        return (Automaatti) automaatit.pop();
         
     }
     
@@ -55,6 +55,8 @@ public class Automaatti {
             kasitteleTahti(automaatit);
         } else if(merkki == '+') {
             kasittelePlus(automaatit);
+        } else if(merkki == '?') {
+            kasitteleKysymysmerkki(automaatit);
         }
     }
     
@@ -75,6 +77,10 @@ public class Automaatti {
     private static void kasittelePlus(OmaStack automaatit) {
         Automaatti toistuva = (Automaatti) automaatit.pop();
         automaatit.push(luoPlusautomaatti(toistuva));
+    }
+    private static void kasitteleKysymysmerkki(OmaStack automaatit) {
+        Automaatti automaatti = (Automaatti) automaatit.pop();
+        automaatit.push(luoKysymysmerkkiautomaatti(automaatti));
     }
     
     /**
@@ -159,6 +165,14 @@ public class Automaatti {
      */
     public static Automaatti luoPlusautomaatti(Automaatti toistuva) {
         return luoLiitosautomaatti(toistuva, luoTahtiautomaatti(toistuva));
+    }
+    
+    public static Automaatti luoKysymysmerkkiautomaatti(Automaatti automaatti) {
+        Tila alkutila = automaatti.getAlkutila();
+        Tila lopputila = automaatti.getLopputila();
+        Siirtofunktio siirtofunktio = new Siirtofunktio(lopputila, null);
+        alkutila.lisaaSiirtofunktio(siirtofunktio);
+        return automaatti;
     }
     
     /**
