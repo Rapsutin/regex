@@ -1,4 +1,4 @@
-Säännöllisten lauseiden tulkki
+Säännöllisten lausekkeiden tulkki
 =====
 Käyttöohje
 
